@@ -44,11 +44,11 @@ What are the top 5 most used DAVE features by transaction volume? Show me the br
 
 ---
 
-### **Question 2: User Acquisition & Segments** (Cortex Analyst - Multi-Domain)
+### **Question 2: User Segments & Value** (Cortex Analyst - Multi-Domain)
 ```
-Which user segments have the highest lifetime value and lowest acquisition cost? Compare Gig Workers, Young Professionals, and Students across these metrics.
+Show me the average lifetime value for Gig Workers, Young Professionals, and Students. Then show me which acquisition channels have the lowest cost per user.
 ```
-**Expected Insight**: Young Professionals have highest LTV ($250-450), Gig Workers highest volume, Students lowest but engaged with budgeting.
+**Expected Insight**: Young Professionals highest LTV ($250-450), Gig Workers $150-300 (high volume), Students $80-180. Referral Program has lowest CAC ($15-30), Instagram medium ($40-60).
 
 ---
 
