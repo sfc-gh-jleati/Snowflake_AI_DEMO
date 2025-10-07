@@ -1,12 +1,62 @@
-job_key,job_title
-800,Engineer
-801,HR Manager
-802,Data Analyst
-803,Recruiter
-804,Finance Specialist
-805,Sales Manager
-806,Marketing Coordinator
-807,Operations Lead
-808,Support Specialist
-809,IT Administrator
-810,Sales Representative
+job_key,job_title,job_level
+800,Product Manager,4
+801,Senior Product Manager,5
+802,Principal Product Manager,6
+803,Software Engineer,3
+804,Senior Software Engineer,4
+805,Staff Software Engineer,5
+806,Principal Engineer,6
+807,Engineering Manager,5
+808,Director of Engineering,6
+809,Product Designer,3
+810,Senior Product Designer,4
+811,Lead Product Designer,5
+812,Data Scientist,4
+813,Senior Data Scientist,5
+814,Data Analyst,3
+815,Analytics Manager,5
+816,Customer Success Representative,2
+817,Senior Customer Success Rep,3
+818,Customer Success Manager,4
+819,Head of Customer Success,6
+820,Customer Support Specialist,2
+821,Senior Support Specialist,3
+822,Support Team Lead,4
+823,Growth Marketing Manager,4
+824,Senior Growth Manager,5
+825,Performance Marketing Manager,4
+826,Content Marketing Manager,4
+827,Brand Manager,4
+828,Head of Marketing,6
+829,Partnerships Manager,4
+830,Senior Partnerships Manager,5
+831,Finance Manager,4
+832,Senior Finance Manager,5
+833,Financial Analyst,3
+834,Accountant,3
+835,Senior Accountant,4
+836,Compliance Officer,4
+837,Senior Compliance Officer,5
+838,Legal Counsel,5
+839,Risk Analyst,3
+840,Fraud Prevention Specialist,3
+841,Senior Fraud Analyst,4
+842,Fraud Operations Manager,5
+843,Recruiter,3
+844,Senior Recruiter,4
+845,People Operations Manager,4
+846,HR Business Partner,4
+847,DevOps Engineer,4
+848,Senior DevOps Engineer,5
+849,QA Engineer,3
+850,Senior QA Engineer,4
+851,Security Engineer,4
+852,Senior Security Engineer,5
+853,Mobile Engineer,3
+854,Senior Mobile Engineer,4
+855,Frontend Engineer,3
+856,Senior Frontend Engineer,4
+857,Backend Engineer,3
+858,Senior Backend Engineer,4
+859,Product Operations Manager,4
+860,Business Intelligence Analyst,3

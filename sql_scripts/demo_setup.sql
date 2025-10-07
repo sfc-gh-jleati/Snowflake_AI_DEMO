@@ -2,10 +2,63 @@
 
 
     -- ========================================================================
-    -- Snowflake AI Demo - Complete Setup Script
-    -- This script creates the database, schema, tables, and loads all data
-    -- Repository: https://github.com/NickAkincilar/Snowflake_AI_DEMO.git
+    -- DAVE Product Analytics Demo - Complete Setup Script
+    -- Snowflake Intelligence Demo for DAVE Operating Co Product Team
+    -- Focus: Customer app usage, product adoption, and engagement analytics
+    -- Repository: https://github.com/sfc-gh-jleati/Snowflake_AI_DEMO.git
     -- ========================================================================
+    
+    /*
+    =============================================================================
+    ABOUT THIS DEMO
+    =============================================================================
+    
+    This demo is customized for DAVE Operating Co's Product Team to showcase
+    how Snowflake Intelligence can provide actionable insights about:
+    
+    1. PRODUCT USAGE ANALYTICS
+       - Track how customers use DAVE app features (ExtraCash, Banking, Budgeting, Credit Builder)
+       - Monitor feature adoption rates and usage patterns
+       - Identify most/least used features
+       - Analyze user engagement trends over time
+       
+    2. TRANSACTION ANALYTICS
+       - Track ExtraCash advances, subscription fees, tips, and other revenue
+       - Analyze transaction volumes and patterns
+       - Monitor average revenue per user (ARPU)
+       - Identify revenue trends by product and user segment
+       
+    3. USER ACQUISITION & RETENTION
+       - Track marketing campaign performance
+       - Analyze user acquisition channels (social, paid ads, referrals, organic)
+       - Monitor user activation and onboarding completion
+       - Calculate customer acquisition cost (CAC) and lifetime value (LTV)
+       - Identify churn patterns and retention opportunities
+       
+    4. TEAM PERFORMANCE
+       - Monitor team composition and staffing levels
+       - Track customer success team performance
+       - Analyze organizational metrics
+    
+    DATA MODEL CONTEXT FOR DAVE:
+    - "Customers" = DAVE app users/members
+    - "Products" = DAVE features/services (ExtraCash, Banking, Budgeting, Credit Builder)
+    - "Sales" = Product usage transactions (when users engage with features)
+    - "Marketing Campaigns" = User acquisition and retention initiatives
+    - "Opportunities" = User activations (signup to active user conversion)
+    - "Finance Transactions" = ExtraCash advances, fees, tips, subscriptions
+    
+    SAMPLE QUESTIONS YOU CAN ASK:
+    - "What are the top 5 most used features by active users?"
+    - "Show me user engagement trends over the last 6 months"
+    - "What is our average revenue per user (ARPU) by product?"
+    - "Which customer segments have the highest churn rate?"
+    - "How is ExtraCash product adoption trending?"
+    - "What's our user acquisition cost by channel?"
+    - "Which campaigns have the best conversion rates?"
+    
+    =============================================================================
+    */
 
     
 
@@ -21,40 +74,40 @@
     GRANT USAGE ON SCHEMA snowflake_intelligence.agents TO ROLE PUBLIC;
 
 
-    create or replace role SF_Intelligence_Demo;
+CREATE OR REPLACE ROLE DAVE_Intelligence_Demo;
 
 
-    SET current_user_name = CURRENT_USER();
+SET current_user_name = CURRENT_USER();
     
     -- Step 2: Use the variable to grant the role
-    GRANT ROLE SF_Intelligence_Demo TO USER IDENTIFIER($current_user_name);
-    GRANT CREATE DATABASE ON ACCOUNT TO ROLE SF_Intelligence_Demo;
+    GRANT ROLE DAVE_Intelligence_Demo TO USER IDENTIFIER($current_user_name);
+    GRANT CREATE DATABASE ON ACCOUNT TO ROLE DAVE_Intelligence_Demo;
     
-    -- Create a dedicated warehouse for the demo with auto-suspend/resume
-    CREATE OR REPLACE WAREHOUSE Snow_Intelligence_demo_wh 
+    -- Create a dedicated warehouse for the DAVE demo with auto-suspend/resume
+    CREATE OR REPLACE WAREHOUSE DAVE_Intelligence_demo_wh 
         WITH WAREHOUSE_SIZE = 'XSMALL'
         AUTO_SUSPEND = 300
         AUTO_RESUME = TRUE;
 
 
-    -- Grant usage on warehouse to admin role
-    GRANT USAGE ON WAREHOUSE SNOW_INTELLIGENCE_DEMO_WH TO ROLE SF_Intelligence_Demo;
+    -- Grant usage on warehouse to DAVE demo role
+    GRANT USAGE ON WAREHOUSE DAVE_INTELLIGENCE_DEMO_WH TO ROLE DAVE_Intelligence_Demo;
 
 
    -- Alter current user's default role and warehouse to the ones used here
-    ALTER USER IDENTIFIER($current_user_name) SET DEFAULT_ROLE = SF_Intelligence_Demo;
-    ALTER USER IDENTIFIER($current_user_name) SET DEFAULT_WAREHOUSE = Snow_Intelligence_demo_wh;
+    ALTER USER IDENTIFIER($current_user_name) SET DEFAULT_ROLE = DAVE_Intelligence_Demo;
+    ALTER USER IDENTIFIER($current_user_name) SET DEFAULT_WAREHOUSE = DAVE_Intelligence_demo_wh;
     
 
-    -- Switch to SF_Intelligence_Demo role to create demo objects
-    use role SF_Intelligence_Demo;
+    -- Switch to DAVE_Intelligence_Demo role to create demo objects
+    use role DAVE_Intelligence_Demo;
    
-    -- Create database and schema
-    CREATE OR REPLACE DATABASE SF_AI_DEMO;
-    USE DATABASE SF_AI_DEMO;
+    -- Create database and schema for DAVE demo
+    CREATE OR REPLACE DATABASE DAVE_AI_DEMO;
+    USE DATABASE DAVE_AI_DEMO;
 
-    CREATE SCHEMA IF NOT EXISTS DEMO_SCHEMA;
-    USE SCHEMA DEMO_SCHEMA;
+    CREATE SCHEMA IF NOT EXISTS DAVE_PRODUCT_ANALYTICS;
+    USE SCHEMA DAVE_PRODUCT_ANALYTICS;
 
     -- Create file format for CSV files
     CREATE OR REPLACE FILE FORMAT CSV_FORMAT
@@ -72,22 +125,22 @@
         NULL_IF = ('NULL', 'null', '', 'N/A', 'n/a');
 
 
-use role accountadmin;
+USE ROLE accountadmin;
     -- Create API Integration for GitHub (public repository access)
     CREATE OR REPLACE API INTEGRATION git_api_integration
         API_PROVIDER = git_https_api
-        API_ALLOWED_PREFIXES = ('https://github.com/NickAkincilar/')
+        API_ALLOWED_PREFIXES = ('https://github.com/sfc-gh-jleati/')
         ENABLED = TRUE;
 
 
-GRANT USAGE ON INTEGRATION GIT_API_INTEGRATION TO ROLE SF_Intelligence_Demo;
+GRANT USAGE ON INTEGRATION GIT_API_INTEGRATION TO ROLE DAVE_Intelligence_Demo;
 
 
-use role SF_Intelligence_Demo;
+USE ROLE DAVE_Intelligence_Demo;
     -- Create Git repository integration for the public demo repository
-    CREATE OR REPLACE GIT REPOSITORY SF_AI_DEMO_REPO
+    CREATE OR REPLACE GIT REPOSITORY DAVE_AI_DEMO_REPO
         API_INTEGRATION = git_api_integration
-        ORIGIN = 'https://github.com/NickAkincilar/Snowflake_AI_DEMO.git';
+        ORIGIN = 'https://github.com/sfc-gh-jleati/Snowflake_AI_DEMO.git';
 
     -- Create internal stage for copied data files
     CREATE OR REPLACE STAGE INTERNAL_DATA_STAGE
@@ -96,7 +149,7 @@ use role SF_Intelligence_Demo;
         DIRECTORY = ( ENABLE = TRUE)
         ENCRYPTION = (   TYPE = 'SNOWFLAKE_SSE');
 
-    ALTER GIT REPOSITORY SF_AI_DEMO_REPO FETCH;
+    ALTER GIT REPOSITORY DAVE_AI_DEMO_REPO FETCH;
 
     -- ========================================================================
     -- COPY DATA FROM GIT TO INTERNAL STAGE
@@ -105,12 +158,12 @@ use role SF_Intelligence_Demo;
     -- Copy all CSV files from Git repository demo_data folder to internal stage
     COPY FILES
     INTO @INTERNAL_DATA_STAGE/demo_data/
-    FROM @SF_AI_DEMO_REPO/branches/main/demo_data/;
+    FROM @DAVE_AI_DEMO_REPO/branches/main/demo_data/;
 
 
     COPY FILES
     INTO @INTERNAL_DATA_STAGE/unstructured_docs/
-    FROM @SF_AI_DEMO_REPO/branches/main/unstructured_docs/;
+    FROM @DAVE_AI_DEMO_REPO/branches/main/unstructured_docs/;
 
     -- Verify files were copied
     LS @INTERNAL_DATA_STAGE;
@@ -139,28 +192,28 @@ use role SF_Intelligence_Demo;
         vertical VARCHAR(50)
     );
 
-    -- Vendor Dimension
+    -- Partner/Service Provider Dimension (B2C context - payment processors, service providers)
     CREATE OR REPLACE TABLE vendor_dim (
         vendor_key INT PRIMARY KEY,
         vendor_name VARCHAR(200) NOT NULL,
-        vertical VARCHAR(50) NOT NULL,
+        vertical VARCHAR(50) NOT NULL,  -- Partner type (Payment Processing, Banking Infrastructure, etc.)
         address VARCHAR(200),
         city VARCHAR(100),
         state VARCHAR(10),
         zip VARCHAR(20)
-    );
+    ) COMMENT = 'Service partners and payment processors (Stripe, Plaid, Dwolla, etc.) - used for operational tracking, not customer-facing';
 
-    -- Customer Dimension
+    -- App User Dimension (B2C - individual DAVE app users)
     CREATE OR REPLACE TABLE customer_dim (
         customer_key INT PRIMARY KEY,
-        customer_name VARCHAR(200) NOT NULL,
-        industry VARCHAR(100),
-        vertical VARCHAR(50),
+        customer_name VARCHAR(200) NOT NULL,  -- User ID
+        industry VARCHAR(100),  -- User segment (Young Professional, Gig Worker, etc.)
+        vertical VARCHAR(50),  -- User vertical category
         address VARCHAR(200),
         city VARCHAR(100),
         state VARCHAR(10),
         zip VARCHAR(20)
-    );
+    ) COMMENT = 'DAVE app users - individual consumers who use the app (not businesses)';
 
     -- Account Dimension (Finance)
     CREATE OR REPLACE TABLE account_dim (
@@ -179,13 +232,6 @@ use role SF_Intelligence_Demo;
     CREATE OR REPLACE TABLE region_dim (
         region_key INT PRIMARY KEY,
         region_name VARCHAR(100) NOT NULL
-    );
-
-    -- Sales Rep Dimension
-    CREATE OR REPLACE TABLE sales_rep_dim (
-        sales_rep_key INT PRIMARY KEY,
-        rep_name VARCHAR(200) NOT NULL,
-        hire_date DATE
     );
 
     -- Campaign Dimension (Marketing)
@@ -226,15 +272,13 @@ use role SF_Intelligence_Demo;
     -- FACT TABLES
     -- ========================================================================
 
-    -- Sales Fact Table
+    -- Product Usage Fact Table (B2C - no sales reps or vendors)
     CREATE OR REPLACE TABLE sales_fact (
         sale_id INT PRIMARY KEY,
         date DATE NOT NULL,
         customer_key INT NOT NULL,
         product_key INT NOT NULL,
-        sales_rep_key INT NOT NULL,
         region_key INT NOT NULL,
-        vendor_key INT NOT NULL,
         amount DECIMAL(10,2) NOT NULL,
         units INT NOT NULL
     );
@@ -277,43 +321,45 @@ use role SF_Intelligence_Demo;
     );
 
     -- ========================================================================
-    -- SALESFORCE CRM TABLES
+    -- USER JOURNEY TABLES (B2C)
+    -- Tracks user signups, activations, and account management
+    -- Note: Field names follow CRM convention but data represents B2C user journey
     -- ========================================================================
 
-    -- Salesforce Accounts Table
+    -- User Accounts Table (B2C - individual app users)
     CREATE OR REPLACE TABLE sf_accounts (
         account_id VARCHAR(20) PRIMARY KEY,
         account_name VARCHAR(200) NOT NULL,
         customer_key INT NOT NULL,
-        industry VARCHAR(100),
-        vertical VARCHAR(50),
+        industry VARCHAR(100),  -- User segment
+        vertical VARCHAR(50),  -- User vertical
         billing_street VARCHAR(200),
         billing_city VARCHAR(100),
         billing_state VARCHAR(10),
         billing_postal_code VARCHAR(20),
-        account_type VARCHAR(50),
-        annual_revenue DECIMAL(15,2),
-        employees INT,
-        created_date DATE
-    );
+        account_type VARCHAR(50),  -- Free, Basic, Premium, Premium Plus
+        annual_revenue DECIMAL(15,2),  -- Lifetime value (LTV)
+        employees INT,  -- Household size
+        created_date DATE  -- Account creation date
+    ) COMMENT = 'User account records - tracks DAVE app user profiles and account tiers';
 
-    -- Salesforce Opportunities Table
+    -- User Activation Opportunities Table (B2C - signup to active user journey)
     CREATE OR REPLACE TABLE sf_opportunities (
         opportunity_id VARCHAR(20) PRIMARY KEY,
-        sale_id INT,
+        sale_id INT,  -- Links to first transaction if activated
         account_id VARCHAR(20) NOT NULL,
         opportunity_name VARCHAR(200) NOT NULL,
-        stage_name VARCHAR(100) NOT NULL,
-        amount DECIMAL(15,2) NOT NULL,
-        probability DECIMAL(5,2),
-        close_date DATE,
-        created_date DATE,
-        lead_source VARCHAR(100),
-        type VARCHAR(100),
-        campaign_id INT
-    );
+        stage_name VARCHAR(100) NOT NULL,  -- Lead, Signup, Verification, Activated, Closed Won
+        amount DECIMAL(15,2) NOT NULL,  -- Predicted LTV
+        probability DECIMAL(5,2),  -- Activation probability
+        close_date DATE,  -- Activation completion date
+        created_date DATE,  -- Signup date
+        lead_source VARCHAR(100),  -- Acquisition channel
+        type VARCHAR(100),  -- New User, Returning User, Premium Upgrade
+        campaign_id INT  -- Attribution to campaign
+    ) COMMENT = 'User activation tracking - monitors journey from signup to active user';
 
-    -- Salesforce Contacts Table
+    -- User Signups/Leads Table (B2C - individual user signups)
     CREATE OR REPLACE TABLE sf_contacts (
         contact_id VARCHAR(20) PRIMARY KEY,
         opportunity_id VARCHAR(20) NOT NULL,
@@ -322,12 +368,12 @@ use role SF_Intelligence_Demo;
         last_name VARCHAR(100),
         email VARCHAR(200),
         phone VARCHAR(50),
-        title VARCHAR(100),
-        department VARCHAR(100),
-        lead_source VARCHAR(100),
-        campaign_no INT,
-        created_date DATE
-    );
+        title VARCHAR(100),  -- User status (Active, New Signup, Premium, Trial)
+        department VARCHAR(100),  -- Interest area (Personal Finance, Savings, etc.)
+        lead_source VARCHAR(100),  -- How they heard about DAVE
+        campaign_no INT,  -- Attribution to campaign
+        created_date DATE  -- Signup date
+    ) COMMENT = 'User signup records - tracks leads and signups from acquisition campaigns';
 
     -- ========================================================================
     -- LOAD DIMENSION DATA FROM INTERNAL STAGE
@@ -372,12 +418,6 @@ use role SF_Intelligence_Demo;
     -- Load Region Dimension
     COPY INTO region_dim
     FROM @INTERNAL_DATA_STAGE/demo_data/region_dim.csv
-    FILE_FORMAT = CSV_FORMAT
-    ON_ERROR = 'CONTINUE';
-
-    -- Load Sales Rep Dimension
-    COPY INTO sales_rep_dim
-    FROM @INTERNAL_DATA_STAGE/demo_data/sales_rep_dim.csv
     FILE_FORMAT = CSV_FORMAT
     ON_ERROR = 'CONTINUE';
 
@@ -440,22 +480,22 @@ use role SF_Intelligence_Demo;
     ON_ERROR = 'CONTINUE';
 
     -- ========================================================================
-    -- LOAD SALESFORCE DATA FROM INTERNAL STAGE
+    -- LOAD USER JOURNEY DATA FROM INTERNAL STAGE
     -- ========================================================================
 
-    -- Load Salesforce Accounts
+    -- Load User Accounts
     COPY INTO sf_accounts
     FROM @INTERNAL_DATA_STAGE/demo_data/sf_accounts.csv
     FILE_FORMAT = CSV_FORMAT
     ON_ERROR = 'CONTINUE';
 
-    -- Load Salesforce Opportunities
+    -- Load User Activations
     COPY INTO sf_opportunities
     FROM @INTERNAL_DATA_STAGE/demo_data/sf_opportunities.csv
     FILE_FORMAT = CSV_FORMAT
     ON_ERROR = 'CONTINUE';
 
-    -- Load Salesforce Contacts
+    -- Load User Signups
     COPY INTO sf_contacts
     FROM @INTERNAL_DATA_STAGE/demo_data/sf_contacts.csv
     FILE_FORMAT = CSV_FORMAT
@@ -486,8 +526,6 @@ use role SF_Intelligence_Demo;
     UNION ALL
     SELECT '', 'region_dim', COUNT(*) FROM region_dim
     UNION ALL
-    SELECT '', 'sales_rep_dim', COUNT(*) FROM sales_rep_dim
-    UNION ALL
     SELECT '', 'campaign_dim', COUNT(*) FROM campaign_dim
     UNION ALL
     SELECT '', 'channel_dim', COUNT(*) FROM channel_dim
@@ -512,41 +550,42 @@ use role SF_Intelligence_Demo;
     UNION ALL
     SELECT '', '', NULL
     UNION ALL
-    SELECT 'SALESFORCE TABLES', '', NULL
+    SELECT 'USER JOURNEY TABLES', '', NULL
     UNION ALL
-    SELECT '', 'sf_accounts', COUNT(*) FROM sf_accounts
+    SELECT '', 'sf_accounts (User Accounts)', COUNT(*) FROM sf_accounts
     UNION ALL
-    SELECT '', 'sf_opportunities', COUNT(*) FROM sf_opportunities
+    SELECT '', 'sf_opportunities (Activations)', COUNT(*) FROM sf_opportunities
     UNION ALL
-    SELECT '', 'sf_contacts', COUNT(*) FROM sf_contacts;
+    SELECT '', 'sf_contacts (Signups)', COUNT(*) FROM sf_contacts;
 
     -- Show all tables
-    SHOW TABLES IN SCHEMA DEMO_SCHEMA; 
+    SHOW TABLES IN SCHEMA DAVE_PRODUCT_ANALYTICS; 
 
 
 
 
   -- ========================================================================
-  -- Snowflake AI Demo - Semantic Views for Cortex Analyst
-  -- Creates business unit-specific semantic views for natural language queries
+  -- DAVE Product Analytics - Semantic Views for Cortex Analyst
+  -- Creates product analytics semantic views for natural language queries
   -- Based on: https://docs.snowflake.com/en/user-guide/views-semantic/sql
   -- ========================================================================
-  USE ROLE SF_Intelligence_Demo;
-  USE DATABASE SF_AI_DEMO;
-  USE SCHEMA DEMO_SCHEMA;
+  USE ROLE DAVE_Intelligence_Demo;
+  USE DATABASE DAVE_AI_DEMO;
+  USE SCHEMA DAVE_PRODUCT_ANALYTICS;
 
   -- ========================================================================
-  -- FINANCE SEMANTIC VIEW
+  -- TRANSACTION ANALYTICS SEMANTIC VIEW (for DAVE)
+  -- Tracks financial transactions, fees, and revenue
   -- ========================================================================
 
- create or replace semantic view SF_AI_DEMO.DEMO_SCHEMA.FINANCE_SEMANTIC_VIEW
+CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.FINANCE_SEMANTIC_VIEW
     tables (
-        TRANSACTIONS as FINANCE_TRANSACTIONS primary key (TRANSACTION_ID) with synonyms=('finance transactions','financial data') comment='All financial transactions across departments',
-        ACCOUNTS as ACCOUNT_DIM primary key (ACCOUNT_KEY) with synonyms=('chart of accounts','account types') comment='Account dimension for financial categorization',
-        DEPARTMENTS as DEPARTMENT_DIM primary key (DEPARTMENT_KEY) with synonyms=('business units','departments') comment='Department dimension for cost center analysis',
-        VENDORS as VENDOR_DIM primary key (VENDOR_KEY) with synonyms=('suppliers','vendors') comment='Vendor information for spend analysis',
-        PRODUCTS as PRODUCT_DIM primary key (PRODUCT_KEY) with synonyms=('products','items') comment='Product dimension for transaction analysis',
-        CUSTOMERS as CUSTOMER_DIM primary key (CUSTOMER_KEY) with synonyms=('clients','customers') comment='Customer dimension for revenue analysis'
+        TRANSACTIONS as FINANCE_TRANSACTIONS primary key (TRANSACTION_ID) with synonyms=('transactions','financial transactions','payments','advances') comment='All DAVE financial transactions: ExtraCash advances, subscription fees, tips, transfers',
+        ACCOUNTS as ACCOUNT_DIM primary key (ACCOUNT_KEY) with synonyms=('account types','transaction types','revenue categories') comment='Transaction categorization: ExtraCash, Subscriptions, Tips, Fees',
+        DEPARTMENTS as DEPARTMENT_DIM primary key (DEPARTMENT_KEY) with synonyms=('business units','departments','product lines') comment='Business unit or department that owns the transaction type',
+        VENDORS as VENDOR_DIM primary key (VENDOR_KEY) with synonyms=('partners','payment processors','vendors') comment='Payment processors and partner information',
+        PRODUCTS as PRODUCT_DIM primary key (PRODUCT_KEY) with synonyms=('products','features','services') comment='DAVE products associated with transactions',
+        CUSTOMERS as CUSTOMER_DIM primary key (CUSTOMER_KEY) with synonyms=('users','members','customers','app users') comment='DAVE app users who made the transactions'
     )
     relationships (
         TRANSACTIONS_TO_ACCOUNTS as TRANSACTIONS(ACCOUNT_KEY) references ACCOUNTS(ACCOUNT_KEY),
@@ -556,107 +595,99 @@ use role SF_Intelligence_Demo;
         TRANSACTIONS_TO_CUSTOMERS as TRANSACTIONS(CUSTOMER_KEY) references CUSTOMERS(CUSTOMER_KEY)
     )
     facts (
-        TRANSACTIONS.TRANSACTION_AMOUNT as amount comment='Transaction amount in dollars',
+        TRANSACTIONS.TRANSACTION_AMOUNT as amount comment='Transaction amount in dollars (ExtraCash advances, fees, tips, subscriptions)',
         TRANSACTIONS.TRANSACTION_RECORD as 1 comment='Count of transactions'
     )
     dimensions (
-        TRANSACTIONS.TRANSACTION_DATE as date with synonyms=('date','transaction date') comment='Date of the financial transaction',
+        TRANSACTIONS.TRANSACTION_DATE as date with synonyms=('date','transaction date','payment date') comment='Date of the financial transaction',
         TRANSACTIONS.TRANSACTION_MONTH as MONTH(date) comment='Month of the transaction',
         TRANSACTIONS.TRANSACTION_YEAR as YEAR(date) comment='Year of the transaction',
-        ACCOUNTS.ACCOUNT_NAME as account_name with synonyms=('account','account type') comment='Name of the account',
-        ACCOUNTS.ACCOUNT_TYPE as account_type with synonyms=('type','category') comment='Type of account (Income/Expense)',
-        DEPARTMENTS.DEPARTMENT_NAME as department_name with synonyms=('department','business unit') comment='Name of the department',
-        VENDORS.VENDOR_NAME as vendor_name with synonyms=('vendor','supplier') comment='Name of the vendor',
-        PRODUCTS.PRODUCT_NAME as product_name with synonyms=('product','item') comment='Name of the product',
-        CUSTOMERS.CUSTOMER_NAME as customer_name with synonyms=('customer','client') comment='Name of the customer'
+        ACCOUNTS.ACCOUNT_NAME as account_name with synonyms=('transaction category','account type','revenue type') comment='Transaction category (ExtraCash, Subscription, Tip, Express Fee, etc.)',
+        ACCOUNTS.ACCOUNT_TYPE as account_type with synonyms=('type','category','revenue category') comment='Type of transaction (Revenue/Income, Fee, Transfer)',
+        DEPARTMENTS.DEPARTMENT_NAME as department_name with synonyms=('department','business unit','product line') comment='Department or product line (Lending, Banking, Subscriptions)',
+        VENDORS.VENDOR_NAME as vendor_name with synonyms=('partner','processor','payment processor') comment='Payment processor or partner name',
+        PRODUCTS.PRODUCT_NAME as product_name with synonyms=('product','feature','service') comment='DAVE product name (ExtraCash, Banking, etc.)',
+        CUSTOMERS.CUSTOMER_NAME as customer_name with synonyms=('user','member','customer','app user') comment='DAVE app user who made the transaction'
     )
     metrics (
-        TRANSACTIONS.AVERAGE_AMOUNT as AVG(transactions.amount) comment='Average transaction amount',
-        TRANSACTIONS.TOTAL_AMOUNT as SUM(transactions.amount) comment='Total transaction amount',
+        TRANSACTIONS.AVERAGE_AMOUNT as AVG(transactions.amount) comment='Average transaction value',
+        TRANSACTIONS.TOTAL_AMOUNT as SUM(transactions.amount) comment='Total transaction volume/revenue',
         TRANSACTIONS.TOTAL_TRANSACTIONS as COUNT(transactions.transaction_record) comment='Total number of transactions'
     )
-    comment='Semantic view for financial analysis and reporting';
+    comment='Semantic view for DAVE transaction analytics - tracks ExtraCash advances, fees, tips, subscriptions, and all financial transactions';
 
 
 
   -- ========================================================================
-  -- SALES SEMANTIC VIEW
+  -- PRODUCT USAGE ANALYTICS SEMANTIC VIEW (for DAVE)
+  -- Tracks app user engagement, feature adoption, and product usage metrics
   -- ========================================================================
 
-create or replace semantic view SF_AI_DEMO.DEMO_SCHEMA.SALES_SEMANTIC_VIEW
+CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.SALES_SEMANTIC_VIEW
 	tables (
-		CUSTOMERS as CUSTOMER_DIM primary key (CUSTOMER_KEY) with synonyms=('clients','customers','accounts') comment='Customer information for sales analysis',
-		PRODUCTS as PRODUCT_DIM primary key (PRODUCT_KEY) with synonyms=('products','items','SKUs') comment='Product catalog for sales analysis',
+		CUSTOMERS as CUSTOMER_DIM primary key (CUSTOMER_KEY) with synonyms=('app users','users','members','customers','accounts') comment='DAVE app users - people who have downloaded and use the DAVE app',
+		PRODUCTS as PRODUCT_DIM primary key (PRODUCT_KEY) with synonyms=('products','features','services','offerings','product lines') comment='DAVE products and features: ExtraCash advances, Banking, Budgeting tools, Credit Builder',
 		PRODUCT_CATEGORY_DIM primary key (CATEGORY_KEY),
-		REGIONS as REGION_DIM primary key (REGION_KEY) with synonyms=('territories','regions','areas') comment='Regional information for territory analysis',
-		SALES as SALES_FACT primary key (SALE_ID) with synonyms=('sales transactions','sales data') comment='All sales transactions and deals',
-		SALES_REPS as SALES_REP_DIM primary key (SALES_REP_KEY) with synonyms=('sales representatives','reps','salespeople') comment='Sales representative information',
-		VENDORS as VENDOR_DIM primary key (VENDOR_KEY) with synonyms=('suppliers','vendors') comment='Vendor information for supply chain analysis'
+		REGIONS as REGION_DIM primary key (REGION_KEY) with synonyms=('territories','regions','areas','markets','geographic areas') comment='Geographic regions where DAVE users are located',
+		SALES as SALES_FACT primary key (SALE_ID) with synonyms=('product usage','transactions','user activities','feature usage') comment='Product usage transactions - when users engage with DAVE features like taking an ExtraCash advance, using budgeting tools, etc.'
 	)
 	relationships (
 		PRODUCT_TO_CATEGORY as PRODUCTS(CATEGORY_KEY) references PRODUCT_CATEGORY_DIM(CATEGORY_KEY),
 		SALES_TO_CUSTOMERS as SALES(CUSTOMER_KEY) references CUSTOMERS(CUSTOMER_KEY),
 		SALES_TO_PRODUCTS as SALES(PRODUCT_KEY) references PRODUCTS(PRODUCT_KEY),
-		SALES_TO_REGIONS as SALES(REGION_KEY) references REGIONS(REGION_KEY),
-		SALES_TO_REPS as SALES(SALES_REP_KEY) references SALES_REPS(SALES_REP_KEY),
-		SALES_TO_VENDORS as SALES(VENDOR_KEY) references VENDORS(VENDOR_KEY)
+		SALES_TO_REGIONS as SALES(REGION_KEY) references REGIONS(REGION_KEY)
 	)
 	facts (
-		SALES.SALE_AMOUNT as amount comment='Sale amount in dollars',
-		SALES.SALE_RECORD as 1 comment='Count of sales transactions',
-		SALES.UNITS_SOLD as units comment='Number of units sold'
+		SALES.SALE_AMOUNT as amount comment='Transaction amount in dollars - includes ExtraCash advances, subscription fees, tips, and other revenue',
+		SALES.SALE_RECORD as 1 comment='Count of product usage transactions',
+		SALES.UNITS_SOLD as units comment='Number of transaction units or feature usages'
 	)
 	dimensions (
-		CUSTOMERS.CUSTOMER_INDUSTRY as INDUSTRY with synonyms=('industry','customer type') comment='Customer industry',
+		CUSTOMERS.CUSTOMER_INDUSTRY as INDUSTRY with synonyms=('user segment','customer type','user category') comment='User demographic segment or type',
 		CUSTOMERS.CUSTOMER_KEY as CUSTOMER_KEY,
-		CUSTOMERS.CUSTOMER_NAME as customer_name with synonyms=('customer','client','account') comment='Name of the customer',
-		PRODUCTS.CATEGORY_KEY as CATEGORY_KEY with synonyms=('category_id','product_category','category_code','classification_key','group_key','product_group_id') comment='Unique identifier for the product category.',
+		CUSTOMERS.CUSTOMER_NAME as customer_name with synonyms=('user','member','customer','app user') comment='App user identifier or name',
+		PRODUCTS.CATEGORY_KEY as CATEGORY_KEY with synonyms=('category_id','product_category','feature_category','service_category','product_line_id') comment='Unique identifier for the product/feature category.',
 		PRODUCTS.PRODUCT_KEY as PRODUCT_KEY,
-		PRODUCTS.PRODUCT_NAME as product_name with synonyms=('product','item') comment='Name of the product',
-		PRODUCT_CATEGORY_DIM.CATEGORY_KEY as CATEGORY_KEY with synonyms=('category_id','category_code','product_category_number','category_identifier','classification_key') comment='Unique identifier for a product category.',
-		PRODUCT_CATEGORY_DIM.CATEGORY_NAME as CATEGORY_NAME with synonyms=('category_title','product_group','classification_name','category_label','product_category_description') comment='The category to which a product belongs, such as electronics, clothing, or software as a service.',
-		PRODUCT_CATEGORY_DIM.VERTICAL as VERTICAL with synonyms=('industry','sector','market','category_group','business_area','domain') comment='The industry or sector in which a product is categorized, such as retail, technology, or manufacturing.',
+		PRODUCTS.PRODUCT_NAME as product_name with synonyms=('product','feature','service','offering') comment='Name of the DAVE product or feature (e.g., ExtraCash, Banking, Budgeting, Credit Builder)',
+		PRODUCT_CATEGORY_DIM.CATEGORY_KEY as CATEGORY_KEY with synonyms=('category_id','category_code','product_line_id','category_identifier','classification_key') comment='Unique identifier for a product category.',
+		PRODUCT_CATEGORY_DIM.CATEGORY_NAME as CATEGORY_NAME with synonyms=('category_title','product_line','feature_group','service_type','product_family') comment='The category to which a DAVE product belongs, such as Financial Services, Banking Services, or Budgeting Tools.',
+		PRODUCT_CATEGORY_DIM.VERTICAL as VERTICAL with synonyms=('business_line','product_vertical','service_area','product_domain') comment='The business vertical or product line, such as Lending, Banking, or Financial Tools.',
 		REGIONS.REGION_KEY as REGION_KEY,
-		REGIONS.REGION_NAME as region_name with synonyms=('region','territory','area') comment='Name of the region',
+		REGIONS.REGION_NAME as region_name with synonyms=('region','market','area','geography') comment='Geographic region where user is located',
 		SALES.CUSTOMER_KEY as CUSTOMER_KEY,
 		SALES.PRODUCT_KEY as PRODUCT_KEY,
 		SALES.REGION_KEY as REGION_KEY,
-		SALES.SALES_REP_KEY as SALES_REP_KEY,
-		SALES.SALE_DATE as date with synonyms=('date','sale date','transaction date') comment='Date of the sale',
+		SALES.SALE_DATE as date with synonyms=('date','transaction date','usage date','activity date') comment='Date when user engaged with the product/feature',
 		SALES.SALE_ID as SALE_ID,
-		SALES.SALE_MONTH as MONTH(date) comment='Month of the sale',
-		SALES.SALE_YEAR as YEAR(date) comment='Year of the sale',
-		SALES.VENDOR_KEY as VENDOR_KEY,
-		SALES_REPS.SALES_REP_KEY as SALES_REP_KEY,
-		SALES_REPS.SALES_REP_NAME as REP_NAME with synonyms=('sales rep','representative','salesperson') comment='Name of the sales representative',
-		VENDORS.VENDOR_KEY as VENDOR_KEY,
-		VENDORS.VENDOR_NAME as vendor_name with synonyms=('vendor','supplier','provider') comment='Name of the vendor'
+		SALES.SALE_MONTH as MONTH(date) comment='Month of the product usage',
+		SALES.SALE_YEAR as YEAR(date) comment='Year of the product usage'
 	)
 	metrics (
-		SALES.AVERAGE_DEAL_SIZE as AVG(sales.amount) comment='Average deal size',
-		SALES.AVERAGE_UNITS_PER_SALE as AVG(sales.units) comment='Average units per sale',
-		SALES.TOTAL_DEALS as COUNT(sales.sale_record) comment='Total number of deals',
-		SALES.TOTAL_REVENUE as SUM(sales.amount) comment='Total sales revenue',
-		SALES.TOTAL_UNITS as SUM(sales.units) comment='Total units sold'
+		SALES.AVERAGE_DEAL_SIZE as AVG(sales.amount) comment='Average transaction value or revenue per user',
+		SALES.AVERAGE_UNITS_PER_SALE as AVG(sales.units) comment='Average usage frequency per transaction',
+		SALES.TOTAL_DEALS as COUNT(sales.sale_record) comment='Total number of product usage transactions',
+		SALES.TOTAL_REVENUE as SUM(sales.amount) comment='Total revenue from all transactions',
+		SALES.TOTAL_UNITS as SUM(sales.units) comment='Total usage volume across all transactions'
 	)
-	comment='Semantic view for sales analysis and performance tracking'
-	with extension (CA='{"tables":[{"name":"CUSTOMERS","dimensions":[{"name":"CUSTOMER_KEY"},{"name":"CUSTOMER_NAME","sample_values":["Bailey and Sons","Oliver Ltd","Santos-Edwards"]},{"name":"Customer_Industry","sample_values":["Retailer","Tech","Manufacturing"]}]},{"name":"PRODUCTS","dimensions":[{"name":"CATEGORY_KEY","unique":false},{"name":"PRODUCT_KEY"},{"name":"PRODUCT_NAME","sample_values":["Obrien-Williams Storage","Miller, Smith and Ford Switch","Tran Group Conveyor"]}]},{"name":"PRODUCT_CATEGORY_DIM","dimensions":[{"name":"CATEGORY_KEY","sample_values":["1","2","3"]},{"name":"CATEGORY_NAME","sample_values":["Electronics","Apparel","SaaS"]},{"name":"VERTICAL","sample_values":["Retail","Tech","Manufacturing"]}]},{"name":"REGIONS","dimensions":[{"name":"REGION_KEY"},{"name":"REGION_NAME","sample_values":["North","South","West"]}]},{"name":"SALES","dimensions":[{"name":"CUSTOMER_KEY"},{"name":"PRODUCT_KEY"},{"name":"REGION_KEY"},{"name":"SALES_REP_KEY"},{"name":"SALE_DATE","sample_values":["2022-01-01","2022-01-02","2022-01-03"]},{"name":"SALE_ID"},{"name":"SALE_MONTH"},{"name":"SALE_YEAR"},{"name":"VENDOR_KEY"}],"facts":[{"name":"SALE_AMOUNT"},{"name":"SALE_RECORD"},{"name":"UNITS_SOLD"}],"metrics":[{"name":"AVERAGE_DEAL_SIZE"},{"name":"AVERAGE_UNITS_PER_SALE"},{"name":"TOTAL_DEALS"},{"name":"TOTAL_REVENUE"},{"name":"TOTAL_UNITS"}]},{"name":"SALES_REPS","dimensions":[{"name":"SALES_REP_KEY"},{"name":"SALES_REP_NAME","sample_values":["Grant Frey","Elizabeth George","Olivia Mcdaniel"]}]},{"name":"VENDORS","dimensions":[{"name":"VENDOR_KEY"},{"name":"VENDOR_NAME","sample_values":["Sullivan and Sons","Smith, Sandoval and Parker","Moore, French and Moore"]}]}],"relationships":[{"name":"PRODUCT_TO_CATEGORY"},{"name":"SALES_TO_CUSTOMERS","relationship_type":"many_to_one"},{"name":"SALES_TO_PRODUCTS","relationship_type":"many_to_one"},{"name":"SALES_TO_REGIONS","relationship_type":"many_to_one"},{"name":"SALES_TO_REPS","relationship_type":"many_to_one"},{"name":"SALES_TO_VENDORS","relationship_type":"many_to_one"}]}');
+	comment='Semantic view for DAVE product usage analytics - tracks app user engagement, feature adoption, and transaction patterns (B2C model - no sales reps or vendors)'
+	with extension (CA='{"tables":[{"name":"CUSTOMERS","dimensions":[{"name":"CUSTOMER_KEY"},{"name":"CUSTOMER_NAME","sample_values":["User_000001","User_000002","User_000003"]},{"name":"Customer_Industry","sample_values":["Young Professional","Gig Worker","Student"]}]},{"name":"PRODUCTS","dimensions":[{"name":"CATEGORY_KEY","unique":false},{"name":"PRODUCT_KEY"},{"name":"PRODUCT_NAME","sample_values":["ExtraCash Advance $75","Dave Banking Account","Budgeting - Goals"]}]},{"name":"PRODUCT_CATEGORY_DIM","dimensions":[{"name":"CATEGORY_KEY","sample_values":["1","2","3"]},{"name":"CATEGORY_NAME","sample_values":["Cash Advances","Banking Services","Budgeting Tools"]},{"name":"VERTICAL","sample_values":["Financial Services","Financial Services","Financial Tools"]}]},{"name":"REGIONS","dimensions":[{"name":"REGION_KEY"},{"name":"REGION_NAME","sample_values":["North","South","West"]}]},{"name":"SALES","dimensions":[{"name":"CUSTOMER_KEY"},{"name":"PRODUCT_KEY"},{"name":"REGION_KEY"},{"name":"SALE_DATE","sample_values":["2024-01-01","2024-01-02","2024-01-03"]},{"name":"SALE_ID"},{"name":"SALE_MONTH"},{"name":"SALE_YEAR"}],"facts":[{"name":"SALE_AMOUNT"},{"name":"SALE_RECORD"},{"name":"UNITS_SOLD"}],"metrics":[{"name":"AVERAGE_DEAL_SIZE"},{"name":"AVERAGE_UNITS_PER_SALE"},{"name":"TOTAL_DEALS"},{"name":"TOTAL_REVENUE"},{"name":"TOTAL_UNITS"}]}],"relationships":[{"name":"PRODUCT_TO_CATEGORY"},{"name":"SALES_TO_CUSTOMERS","relationship_type":"many_to_one"},{"name":"SALES_TO_PRODUCTS","relationship_type":"many_to_one"},{"name":"SALES_TO_REGIONS","relationship_type":"many_to_one"}]}');
 
 
 -- ========================================================================
-  -- MARKETING SEMANTIC VIEW
+  -- USER ACQUISITION & RETENTION SEMANTIC VIEW (for DAVE)
+  -- Tracks user acquisition campaigns, retention efforts, and engagement
   -- ========================================================================
-create or replace semantic view SF_AI_DEMO.DEMO_SCHEMA.MARKETING_SEMANTIC_VIEW
+CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.MARKETING_SEMANTIC_VIEW
 	tables (
-		ACCOUNTS as SF_ACCOUNTS primary key (ACCOUNT_ID) with synonyms=('customers','accounts','clients') comment='Customer account information for revenue analysis',
-		CAMPAIGNS as MARKETING_CAMPAIGN_FACT primary key (CAMPAIGN_FACT_ID) with synonyms=('marketing campaigns','campaign data') comment='Marketing campaign performance data',
-		CAMPAIGN_DETAILS as CAMPAIGN_DIM primary key (CAMPAIGN_KEY) with synonyms=('campaign info','campaign details') comment='Campaign dimension with objectives and names',
-		CHANNELS as CHANNEL_DIM primary key (CHANNEL_KEY) with synonyms=('marketing channels','channels') comment='Marketing channel information',
-		CONTACTS as SF_CONTACTS primary key (CONTACT_ID) with synonyms=('leads','contacts','prospects') comment='Contact records generated from marketing campaigns',
-		CONTACTS_FOR_OPPORTUNITIES as SF_CONTACTS primary key (CONTACT_ID) with synonyms=('opportunity contacts') comment='Contact records generated from marketing campaigns, specifically for opportunities, not leads',
-		OPPORTUNITIES as SF_OPPORTUNITIES primary key (OPPORTUNITY_ID) with synonyms=('deals','opportunities','sales pipeline') comment='Sales opportunities and revenue data',
-		PRODUCTS as PRODUCT_DIM primary key (PRODUCT_KEY) with synonyms=('products','items') comment='Product dimension for campaign-specific analysis',
-		REGIONS as REGION_DIM primary key (REGION_KEY) with synonyms=('territories','regions','markets') comment='Regional information for campaign analysis'
+		ACCOUNTS as SF_ACCOUNTS primary key (ACCOUNT_ID) with synonyms=('users','app users','member accounts','customers') comment='DAVE app user account information for engagement and retention analysis',
+		CAMPAIGNS as MARKETING_CAMPAIGN_FACT primary key (CAMPAIGN_FACT_ID) with synonyms=('acquisition campaigns','user campaigns','growth campaigns','marketing initiatives') comment='User acquisition and retention campaign performance data',
+		CAMPAIGN_DETAILS as CAMPAIGN_DIM primary key (CAMPAIGN_KEY) with synonyms=('campaign info','campaign details','campaign metadata') comment='Campaign details including objectives (user acquisition, retention, engagement)',
+		CHANNELS as CHANNEL_DIM primary key (CHANNEL_KEY) with synonyms=('acquisition channels','marketing channels','user sources') comment='Acquisition channels: social media, paid ads, referrals, organic, partnerships',
+		CONTACTS as SF_CONTACTS primary key (CONTACT_ID) with synonyms=('leads','prospects','potential users','signups') comment='User signups and leads generated from acquisition campaigns',
+		CONTACTS_FOR_OPPORTUNITIES as SF_CONTACTS primary key (CONTACT_ID) with synonyms=('converted users','activated users') comment='Users who converted from leads to active app users',
+		OPPORTUNITIES as SF_OPPORTUNITIES primary key (OPPORTUNITY_ID) with synonyms=('conversions','user activations','new users','activated accounts') comment='User conversion opportunities - tracking from signup to active user',
+		PRODUCTS as PRODUCT_DIM primary key (PRODUCT_KEY) with synonyms=('products','features','offerings') comment='DAVE products featured in acquisition campaigns',
+		REGIONS as REGION_DIM primary key (REGION_KEY) with synonyms=('territories','markets','geographic areas') comment='Geographic regions targeted by acquisition campaigns'
 	)
 	relationships (
 		CAMPAIGNS_TO_CHANNELS as CAMPAIGNS(CHANNEL_KEY) references CHANNELS(CHANNEL_KEY),
@@ -671,22 +702,22 @@ create or replace semantic view SF_AI_DEMO.DEMO_SCHEMA.MARKETING_SEMANTIC_VIEW
 	)
 	facts (
 		PUBLIC CAMPAIGNS.CAMPAIGN_RECORD as 1 comment='Count of campaign activities',
-		PUBLIC CAMPAIGNS.CAMPAIGN_SPEND as spend comment='Marketing spend in dollars',
-		PUBLIC CAMPAIGNS.IMPRESSIONS as IMPRESSIONS comment='Number of impressions',
-		PUBLIC CAMPAIGNS.LEADS_GENERATED as LEADS_GENERATED comment='Number of leads generated',
-		PUBLIC CONTACTS.CONTACT_RECORD as 1 comment='Count of contacts generated',
-		PUBLIC OPPORTUNITIES.OPPORTUNITY_RECORD as 1 comment='Count of opportunities created',
-		PUBLIC OPPORTUNITIES.REVENUE as AMOUNT comment='Opportunity revenue in dollars'
+		PUBLIC CAMPAIGNS.CAMPAIGN_SPEND as spend comment='User acquisition and retention spend in dollars (CAC - Customer Acquisition Cost)',
+		PUBLIC CAMPAIGNS.IMPRESSIONS as IMPRESSIONS comment='Number of ad impressions or campaign reach',
+		PUBLIC CAMPAIGNS.LEADS_GENERATED as LEADS_GENERATED comment='Number of app downloads or signups generated',
+		PUBLIC CONTACTS.CONTACT_RECORD as 1 comment='Count of user signups generated',
+		PUBLIC OPPORTUNITIES.OPPORTUNITY_RECORD as 1 comment='Count of user activations (users who completed onboarding)',
+		PUBLIC OPPORTUNITIES.REVENUE as AMOUNT comment='Revenue generated from activated users'
 	)
 	dimensions (
 		PUBLIC ACCOUNTS.ACCOUNT_ID as ACCOUNT_ID,
-		PUBLIC ACCOUNTS.ACCOUNT_NAME as ACCOUNT_NAME with synonyms=('customer name','client name','company') comment='Name of the customer account',
-		PUBLIC ACCOUNTS.ACCOUNT_TYPE as ACCOUNT_TYPE with synonyms=('customer type','account category') comment='Type of customer account',
-		PUBLIC ACCOUNTS.ANNUAL_REVENUE as ANNUAL_REVENUE with synonyms=('customer revenue','company revenue') comment='Customer annual revenue',
-		PUBLIC ACCOUNTS.EMPLOYEES as EMPLOYEES with synonyms=('company size','employee count') comment='Number of employees at customer',
-		PUBLIC ACCOUNTS.INDUSTRY as INDUSTRY with synonyms=('industry','sector') comment='Customer industry',
-		PUBLIC ACCOUNTS.SALES_CUSTOMER_KEY as CUSTOMER_KEY with synonyms=('Customer No','Customer ID') comment='This is the customer key thank links the Salesforce account to customers table.',
-		PUBLIC CAMPAIGNS.CAMPAIGN_DATE as date with synonyms=('date','campaign date') comment='Date of the campaign activity',
+		PUBLIC ACCOUNTS.ACCOUNT_NAME as ACCOUNT_NAME with synonyms=('user name','member name','account name','user id') comment='User identifier or account name',
+		PUBLIC ACCOUNTS.ACCOUNT_TYPE as ACCOUNT_TYPE with synonyms=('user type','account tier','membership level','subscription tier') comment='User account tier: Free, Basic, Premium, Premium Plus',
+		PUBLIC ACCOUNTS.ANNUAL_REVENUE as LIFETIME_VALUE with synonyms=('user ltv','lifetime value','user revenue','total value') comment='Lifetime value (LTV) - total revenue generated from this user',
+		PUBLIC ACCOUNTS.EMPLOYEES as HOUSEHOLD_SIZE with synonyms=('household size','family members','dependents') comment='Number of people in user household',
+		PUBLIC ACCOUNTS.INDUSTRY as USER_SEGMENT with synonyms=('user segment','demographic segment','user category','user type') comment='User demographic segment (Young Professional, Gig Worker, Student, etc.)',
+		PUBLIC ACCOUNTS.SALES_CUSTOMER_KEY as CUSTOMER_KEY with synonyms=('User ID','Member ID','Customer Key') comment='User key that links to the app users table.',
+		PUBLIC CAMPAIGNS.CAMPAIGN_DATE as date with synonyms=('date','campaign date','activity date') comment='Date of the acquisition or retention campaign activity',
 		PUBLIC CAMPAIGNS.CAMPAIGN_FACT_ID as CAMPAIGN_FACT_ID,
 		PUBLIC CAMPAIGNS.CAMPAIGN_KEY as CAMPAIGN_KEY,
 		PUBLIC CAMPAIGNS.CAMPAIGN_MONTH as MONTH(date) comment='Month of the campaign',
@@ -695,29 +726,29 @@ create or replace semantic view SF_AI_DEMO.DEMO_SCHEMA.MARKETING_SEMANTIC_VIEW
 		PUBLIC CAMPAIGNS.PRODUCT_KEY as PRODUCT_KEY with synonyms=('product_id','product identifier') comment='Product identifier for campaign targeting',
 		PUBLIC CAMPAIGNS.REGION_KEY as REGION_KEY,
 		PUBLIC CAMPAIGN_DETAILS.CAMPAIGN_KEY as CAMPAIGN_KEY,
-		PUBLIC CAMPAIGN_DETAILS.CAMPAIGN_NAME as CAMPAIGN_NAME with synonyms=('campaign','campaign title') comment='Name of the marketing campaign',
-		PUBLIC CAMPAIGN_DETAILS.CAMPAIGN_OBJECTIVE as OBJECTIVE with synonyms=('objective','goal','purpose') comment='Campaign objective',
+		PUBLIC CAMPAIGN_DETAILS.CAMPAIGN_NAME as CAMPAIGN_NAME with synonyms=('campaign','campaign title','marketing initiative') comment='Name of the user acquisition or retention campaign',
+		PUBLIC CAMPAIGN_DETAILS.CAMPAIGN_OBJECTIVE as OBJECTIVE with synonyms=('objective','goal','purpose','campaign type') comment='Campaign objective (user acquisition, retention, engagement, reactivation)',
 		PUBLIC CHANNELS.CHANNEL_KEY as CHANNEL_KEY,
-		PUBLIC CHANNELS.CHANNEL_NAME as CHANNEL_NAME with synonyms=('channel','marketing channel') comment='Name of the marketing channel',
+		PUBLIC CHANNELS.CHANNEL_NAME as CHANNEL_NAME with synonyms=('channel','acquisition channel','marketing channel','user source') comment='Acquisition channel (social media, paid ads, referrals, organic, partnerships)',
 		PUBLIC CONTACTS.ACCOUNT_ID as ACCOUNT_ID,
 		PUBLIC CONTACTS.CAMPAIGN_NO as CAMPAIGN_NO,
 		PUBLIC CONTACTS.CONTACT_ID as CONTACT_ID,
-		PUBLIC CONTACTS.DEPARTMENT as DEPARTMENT with synonyms=('department','business unit') comment='Contact department',
-		PUBLIC CONTACTS.EMAIL as EMAIL with synonyms=('email','email address') comment='Contact email address',
-		PUBLIC CONTACTS.FIRST_NAME as FIRST_NAME with synonyms=('first name','contact name') comment='Contact first name',
-		PUBLIC CONTACTS.LAST_NAME as LAST_NAME with synonyms=('last name','surname') comment='Contact last name',
-		PUBLIC CONTACTS.LEAD_SOURCE as LEAD_SOURCE with synonyms=('lead source','source') comment='How the contact was generated',
+		PUBLIC CONTACTS.DEPARTMENT as DEPARTMENT with synonyms=('user category','user group') comment='User category or grouping',
+		PUBLIC CONTACTS.EMAIL as EMAIL with synonyms=('email','email address','user email') comment='User email address',
+		PUBLIC CONTACTS.FIRST_NAME as FIRST_NAME with synonyms=('first name','user first name') comment='User first name',
+		PUBLIC CONTACTS.LAST_NAME as LAST_NAME with synonyms=('last name','surname','user last name') comment='User last name',
+		PUBLIC CONTACTS.LEAD_SOURCE as LEAD_SOURCE with synonyms=('signup source','acquisition source','referral source') comment='How the user signed up (social media, referral, ads, organic)',
 		PUBLIC CONTACTS.OPPORTUNITY_ID as OPPORTUNITY_ID,
-		PUBLIC CONTACTS.TITLE as TITLE with synonyms=('job title','position') comment='Contact job title',
+		PUBLIC CONTACTS.TITLE as TITLE with synonyms=('user status','account status') comment='User account status',
 		PUBLIC OPPORTUNITIES.ACCOUNT_ID as ACCOUNT_ID,
-		PUBLIC OPPORTUNITIES.CAMPAIGN_ID as CAMPAIGN_ID with synonyms=('campaign fact id','marketing campaign id') comment='Campaign fact ID that links opportunity to marketing campaign',
-		PUBLIC OPPORTUNITIES.CLOSE_DATE as CLOSE_DATE with synonyms=('close date','expected close') comment='Expected or actual close date',
+		PUBLIC OPPORTUNITIES.CAMPAIGN_ID as CAMPAIGN_ID with synonyms=('campaign id','acquisition campaign id') comment='Campaign ID that links user activation to acquisition campaign',
+		PUBLIC OPPORTUNITIES.CLOSE_DATE as CLOSE_DATE with synonyms=('activation date','onboarding date','conversion date') comment='Date when user completed activation/onboarding',
 		PUBLIC OPPORTUNITIES.OPPORTUNITY_ID as OPPORTUNITY_ID,
-		PUBLIC OPPORTUNITIES.OPPORTUNITY_LEAD_SOURCE as lead_source with synonyms=('opportunity source','deal source') comment='Source of the opportunity',
-		PUBLIC OPPORTUNITIES.OPPORTUNITY_NAME as OPPORTUNITY_NAME with synonyms=('deal name','opportunity title') comment='Name of the sales opportunity',
-		PUBLIC OPPORTUNITIES.OPPORTUNITY_STAGE as STAGE_NAME comment='Stage name of the opportinity. Closed Won indicates an actual sale with revenue',
-		PUBLIC OPPORTUNITIES.OPPORTUNITY_TYPE as TYPE with synonyms=('deal type','opportunity type') comment='Type of opportunity',
-		PUBLIC OPPORTUNITIES.SALES_SALE_ID as SALE_ID with synonyms=('sales id','invoice no') comment='Sales_ID for sales_fact table that links this opp to a sales record.',
+		PUBLIC OPPORTUNITIES.OPPORTUNITY_LEAD_SOURCE as lead_source with synonyms=('activation source','signup source') comment='Source that led to user activation',
+		PUBLIC OPPORTUNITIES.OPPORTUNITY_NAME as OPPORTUNITY_NAME with synonyms=('user activation','conversion event','onboarding completion') comment='User activation or conversion event',
+		PUBLIC OPPORTUNITIES.OPPORTUNITY_STAGE as STAGE_NAME comment='User activation stage. Closed Won indicates a fully activated user who has completed onboarding',
+		PUBLIC OPPORTUNITIES.OPPORTUNITY_TYPE as TYPE with synonyms=('activation type','user type','conversion type') comment='Type of user activation or conversion',
+		PUBLIC OPPORTUNITIES.SALES_SALE_ID as SALE_ID with synonyms=('transaction id','usage id') comment='Transaction ID linking user activation to first product usage',
 		PUBLIC PRODUCTS.PRODUCT_CATEGORY as CATEGORY_NAME with synonyms=('category','product category') comment='Category of the product',
 		PUBLIC PRODUCTS.PRODUCT_KEY as PRODUCT_KEY,
 		PUBLIC PRODUCTS.PRODUCT_NAME as PRODUCT_NAME with synonyms=('product','item','product title') comment='Name of the product being promoted',
@@ -726,32 +757,33 @@ create or replace semantic view SF_AI_DEMO.DEMO_SCHEMA.MARKETING_SEMANTIC_VIEW
 		PUBLIC REGIONS.REGION_NAME as REGION_NAME with synonyms=('region','market','territory') comment='Name of the region'
 	)
 	metrics (
-		PUBLIC CAMPAIGNS.AVERAGE_SPEND as AVG(CAMPAIGNS.spend) comment='Average campaign spend',
-		PUBLIC CAMPAIGNS.TOTAL_CAMPAIGNS as COUNT(CAMPAIGNS.campaign_record) comment='Total number of campaign activities',
-		PUBLIC CAMPAIGNS.TOTAL_IMPRESSIONS as SUM(CAMPAIGNS.impressions) comment='Total impressions across campaigns',
-		PUBLIC CAMPAIGNS.TOTAL_LEADS as SUM(CAMPAIGNS.leads_generated) comment='Total leads generated from campaigns',
-		PUBLIC CAMPAIGNS.TOTAL_SPEND as SUM(CAMPAIGNS.spend) comment='Total marketing spend',
-		PUBLIC CONTACTS.TOTAL_CONTACTS as COUNT(CONTACTS.contact_record) comment='Total contacts generated from campaigns',
-		PUBLIC OPPORTUNITIES.AVERAGE_DEAL_SIZE as AVG(OPPORTUNITIES.revenue) comment='Average opportunity size from marketing',
-		PUBLIC OPPORTUNITIES.CLOSED_WON_REVENUE as SUM(CASE WHEN OPPORTUNITIES.opportunity_stage = 'Closed Won' THEN OPPORTUNITIES.revenue ELSE 0 END) comment='Revenue from closed won opportunities',
-		PUBLIC OPPORTUNITIES.TOTAL_OPPORTUNITIES as COUNT(OPPORTUNITIES.opportunity_record) comment='Total opportunities from marketing',
-		PUBLIC OPPORTUNITIES.TOTAL_REVENUE as SUM(OPPORTUNITIES.revenue) comment='Total revenue from marketing-driven opportunities'
+		PUBLIC CAMPAIGNS.AVERAGE_SPEND as AVG(CAMPAIGNS.spend) comment='Average spend per acquisition/retention campaign (CAC per campaign)',
+		PUBLIC CAMPAIGNS.TOTAL_CAMPAIGNS as COUNT(CAMPAIGNS.campaign_record) comment='Total number of acquisition and retention campaign activities',
+		PUBLIC CAMPAIGNS.TOTAL_IMPRESSIONS as SUM(CAMPAIGNS.impressions) comment='Total impressions or reach across all campaigns',
+		PUBLIC CAMPAIGNS.TOTAL_LEADS as SUM(CAMPAIGNS.leads_generated) comment='Total app downloads and signups generated from campaigns',
+		PUBLIC CAMPAIGNS.TOTAL_SPEND as SUM(CAMPAIGNS.spend) comment='Total user acquisition and retention spend',
+		PUBLIC CONTACTS.TOTAL_CONTACTS as COUNT(CONTACTS.contact_record) comment='Total user signups generated from campaigns',
+		PUBLIC OPPORTUNITIES.AVERAGE_DEAL_SIZE as AVG(OPPORTUNITIES.revenue) comment='Average revenue per activated user (ARPU)',
+		PUBLIC OPPORTUNITIES.CLOSED_WON_REVENUE as SUM(CASE WHEN OPPORTUNITIES.opportunity_stage = 'Closed Won' THEN OPPORTUNITIES.revenue ELSE 0 END) comment='Revenue from fully activated users',
+		PUBLIC OPPORTUNITIES.TOTAL_OPPORTUNITIES as COUNT(OPPORTUNITIES.opportunity_record) comment='Total user activations from acquisition campaigns',
+		PUBLIC OPPORTUNITIES.TOTAL_REVENUE as SUM(OPPORTUNITIES.revenue) comment='Total revenue from campaign-acquired users'
 	)
-	comment='Enhanced semantic view for marketing campaign analysis with complete revenue attribution and ROI tracking'
+	comment='Semantic view for DAVE user acquisition & retention analytics - tracks campaign performance, user signups, activations, and conversion to revenue'
 	with extension (CA='{"tables":[{"name":"ACCOUNTS","dimensions":[{"name":"ACCOUNT_ID"},{"name":"ACCOUNT_NAME"},{"name":"ACCOUNT_TYPE"},{"name":"ANNUAL_REVENUE"},{"name":"EMPLOYEES"},{"name":"INDUSTRY"},{"name":"SALES_CUSTOMER_KEY"}]},{"name":"CAMPAIGNS","dimensions":[{"name":"CAMPAIGN_DATE"},{"name":"CAMPAIGN_FACT_ID"},{"name":"CAMPAIGN_KEY"},{"name":"CAMPAIGN_MONTH"},{"name":"CAMPAIGN_YEAR"},{"name":"CHANNEL_KEY"},{"name":"PRODUCT_KEY"},{"name":"REGION_KEY"}],"facts":[{"name":"CAMPAIGN_RECORD"},{"name":"CAMPAIGN_SPEND"},{"name":"IMPRESSIONS"},{"name":"LEADS_GENERATED"}],"metrics":[{"name":"AVERAGE_SPEND"},{"name":"TOTAL_CAMPAIGNS"},{"name":"TOTAL_IMPRESSIONS"},{"name":"TOTAL_LEADS"},{"name":"TOTAL_SPEND"}]},{"name":"CAMPAIGN_DETAILS","dimensions":[{"name":"CAMPAIGN_KEY"},{"name":"CAMPAIGN_NAME"},{"name":"CAMPAIGN_OBJECTIVE"}]},{"name":"CHANNELS","dimensions":[{"name":"CHANNEL_KEY"},{"name":"CHANNEL_NAME"}]},{"name":"CONTACTS","dimensions":[{"name":"ACCOUNT_ID"},{"name":"CAMPAIGN_NO"},{"name":"CONTACT_ID"},{"name":"DEPARTMENT"},{"name":"EMAIL"},{"name":"FIRST_NAME"},{"name":"LAST_NAME"},{"name":"LEAD_SOURCE"},{"name":"OPPORTUNITY_ID"},{"name":"TITLE"}],"facts":[{"name":"CONTACT_RECORD"}],"metrics":[{"name":"TOTAL_CONTACTS"}]},{"name":"CONTACTS_FOR_OPPORTUNITIES"},{"name":"OPPORTUNITIES","dimensions":[{"name":"ACCOUNT_ID"},{"name":"CAMPAIGN_ID"},{"name":"CLOSE_DATE"},{"name":"OPPORTUNITY_ID"},{"name":"OPPORTUNITY_LEAD_SOURCE"},{"name":"OPPORTUNITY_NAME"},{"name":"OPPORTUNITY_STAGE","sample_values":["Closed Won","Perception Analysis","Qualification"]},{"name":"OPPORTUNITY_TYPE"},{"name":"SALES_SALE_ID"}],"facts":[{"name":"OPPORTUNITY_RECORD"},{"name":"REVENUE"}],"metrics":[{"name":"AVERAGE_DEAL_SIZE"},{"name":"CLOSED_WON_REVENUE"},{"name":"TOTAL_OPPORTUNITIES"},{"name":"TOTAL_REVENUE"}]},{"name":"PRODUCTS","dimensions":[{"name":"PRODUCT_CATEGORY"},{"name":"PRODUCT_KEY"},{"name":"PRODUCT_NAME"},{"name":"PRODUCT_VERTICAL"}]},{"name":"REGIONS","dimensions":[{"name":"REGION_KEY"},{"name":"REGION_NAME"}]}],"relationships":[{"name":"CAMPAIGNS_TO_CHANNELS","relationship_type":"many_to_one"},{"name":"CAMPAIGNS_TO_DETAILS","relationship_type":"many_to_one"},{"name":"CAMPAIGNS_TO_PRODUCTS","relationship_type":"many_to_one"},{"name":"CAMPAIGNS_TO_REGIONS","relationship_type":"many_to_one"},{"name":"CONTACTS_TO_ACCOUNTS","relationship_type":"many_to_one"},{"name":"CONTACTS_TO_CAMPAIGNS","relationship_type":"many_to_one"},{"name":"CONTACTS_TO_OPPORTUNITIES","relationship_type":"many_to_one"},{"name":"OPPORTUNITIES_TO_ACCOUNTS","relationship_type":"many_to_one"},{"name":"OPPORTUNITIES_TO_CAMPAIGNS"}],"verified_queries":[{"name":"include opps that turned in to sales deal","question":"include opps that turned in to sales deal","sql":"WITH campaign_impressions AS (\\n  SELECT\\n    c.campaign_key,\\n    cd.campaign_name,\\n    SUM(c.impressions) AS total_impressions\\n  FROM\\n    campaigns AS c\\n    LEFT OUTER JOIN campaign_details AS cd ON c.campaign_key = cd.campaign_key\\n  WHERE\\n    c.campaign_year = 2025\\n  GROUP BY\\n    c.campaign_key,\\n    cd.campaign_name\\n),\\ncampaign_opportunities AS (\\n  SELECT\\n    c.campaign_key,\\n    COUNT(o.opportunity_record) AS total_opportunities,\\n    COUNT(\\n      CASE\\n        WHEN o.opportunity_stage = ''Closed Won'' THEN o.opportunity_record\\n      END\\n    ) AS closed_won_opportunities\\n  FROM\\n    campaigns AS c\\n    LEFT OUTER JOIN opportunities AS o ON c.campaign_fact_id = o.campaign_id\\n  WHERE\\n    c.campaign_year = 2025\\n  GROUP BY\\n    c.campaign_key\\n)\\nSELECT\\n  ci.campaign_name,\\n  ci.total_impressions,\\n  COALESCE(co.total_opportunities, 0) AS total_opportunities,\\n  COALESCE(co.closed_won_opportunities, 0) AS closed_won_opportunities\\nFROM\\n  campaign_impressions AS ci\\n  LEFT JOIN campaign_opportunities AS co ON ci.campaign_key = co.campaign_key\\nORDER BY\\n  ci.total_impressions DESC NULLS LAST","use_as_onboarding_question":false,"verified_by":"Nick Akincilar","verified_at":1757262696}]}');
 
 
 
   -- ========================================================================
-  -- HR SEMANTIC VIEW
+  -- TEAM PERFORMANCE SEMANTIC VIEW (for DAVE)
+  -- Tracks team metrics, staffing, and organizational structure
   -- ========================================================================
-create or replace semantic view SF_AI_DEMO.DEMO_SCHEMA.HR_SEMANTIC_VIEW
+CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.HR_SEMANTIC_VIEW
 	tables (
-		DEPARTMENTS as DEPARTMENT_DIM primary key (DEPARTMENT_KEY) with synonyms=('departments','business units') comment='Department dimension for organizational analysis',
-		EMPLOYEES as EMPLOYEE_DIM primary key (EMPLOYEE_KEY) with synonyms=('employees','staff','workforce') comment='Employee dimension with personal information',
-		HR_RECORDS as HR_EMPLOYEE_FACT primary key (HR_FACT_ID) with synonyms=('hr data','employee records') comment='HR employee fact data for workforce analysis',
-		JOBS as JOB_DIM primary key (JOB_KEY) with synonyms=('job titles','positions','roles') comment='Job dimension with titles and levels',
-		LOCATIONS as LOCATION_DIM primary key (LOCATION_KEY) with synonyms=('locations','offices','sites') comment='Location dimension for geographic analysis'
+		DEPARTMENTS as DEPARTMENT_DIM primary key (DEPARTMENT_KEY) with synonyms=('departments','teams','business units') comment='DAVE departments and teams: Product, Engineering, Customer Success, Operations',
+		EMPLOYEES as EMPLOYEE_DIM primary key (EMPLOYEE_KEY) with synonyms=('employees','team members','staff','workforce') comment='DAVE team members including product, engineering, customer success, and operations staff',
+		HR_RECORDS as HR_EMPLOYEE_FACT primary key (HR_FACT_ID) with synonyms=('team data','employee records','staffing data') comment='Team member records for workforce analysis and performance tracking',
+		JOBS as JOB_DIM primary key (JOB_KEY) with synonyms=('roles','positions','job titles') comment='Job roles: Product Manager, Engineer, Customer Success Rep, Operations Analyst, etc.',
+		LOCATIONS as LOCATION_DIM primary key (LOCATION_KEY) with synonyms=('locations','offices','work locations','sites') comment='Work locations for team members (headquarters, remote, regional offices)'
 	)
 	relationships (
 		HR_TO_DEPARTMENTS as HR_RECORDS(DEPARTMENT_KEY) references DEPARTMENTS(DEPARTMENT_KEY),
@@ -760,38 +792,38 @@ create or replace semantic view SF_AI_DEMO.DEMO_SCHEMA.HR_SEMANTIC_VIEW
 		HR_TO_LOCATIONS as HR_RECORDS(LOCATION_KEY) references LOCATIONS(LOCATION_KEY)
 	)
 	facts (
-		HR_RECORDS.ATTRITION_FLAG as attrition_flag with synonyms=('turnover_indicator','employee_departure_flag','separation_flag','employee_retention_status','churn_status','employee_exit_indicator') comment='Attrition flag. value is 0 if employee is currently active. 1 if employee quit & left the company. Always filter by 0 to show active employees unless specified otherwise',
-		HR_RECORDS.EMPLOYEE_RECORD as 1 comment='Count of employee records',
-		HR_RECORDS.EMPLOYEE_SALARY as salary comment='Employee salary in dollars'
+		HR_RECORDS.ATTRITION_FLAG as attrition_flag with synonyms=('turnover_indicator','departure_flag','separation_flag','retention_status','churn_status','exit_indicator') comment='Attrition flag. value is 0 if team member is currently active. 1 if team member has left DAVE. Always filter by 0 to show active team members unless specified otherwise',
+		HR_RECORDS.EMPLOYEE_RECORD as 1 comment='Count of team member records',
+		HR_RECORDS.EMPLOYEE_SALARY as salary comment='Team member salary/compensation in dollars'
 	)
 	dimensions (
 		DEPARTMENTS.DEPARTMENT_KEY as DEPARTMENT_KEY,
-		DEPARTMENTS.DEPARTMENT_NAME as department_name with synonyms=('department','business unit','division') comment='Name of the department',
+		DEPARTMENTS.DEPARTMENT_NAME as department_name with synonyms=('department','team','business unit','division') comment='Department or team name (Product, Engineering, Customer Success, Operations, Marketing)',
 		EMPLOYEES.EMPLOYEE_KEY as EMPLOYEE_KEY,
-		EMPLOYEES.EMPLOYEE_NAME as employee_name with synonyms=('employee','staff member','person','sales rep','manager','director','executive') comment='Name of the employee',
-		EMPLOYEES.GENDER as gender with synonyms=('gender','sex') comment='Employee gender',
-		EMPLOYEES.HIRE_DATE as hire_date with synonyms=('hire date','start date') comment='Date when employee was hired',
+		EMPLOYEES.EMPLOYEE_NAME as employee_name with synonyms=('employee','team member','staff member','person','cs rep','engineer','product manager') comment='Name of the team member',
+		EMPLOYEES.GENDER as gender with synonyms=('gender','sex') comment='Team member gender',
+		EMPLOYEES.HIRE_DATE as hire_date with synonyms=('hire date','start date','join date') comment='Date when team member joined DAVE',
 		HR_RECORDS.DEPARTMENT_KEY as DEPARTMENT_KEY,
 		HR_RECORDS.EMPLOYEE_KEY as EMPLOYEE_KEY,
 		HR_RECORDS.HR_FACT_ID as HR_FACT_ID,
 		HR_RECORDS.JOB_KEY as JOB_KEY,
 		HR_RECORDS.LOCATION_KEY as LOCATION_KEY,
-		HR_RECORDS.RECORD_DATE as date with synonyms=('date','record date') comment='Date of the HR record',
-		HR_RECORDS.RECORD_MONTH as MONTH(date) comment='Month of the HR record',
-		HR_RECORDS.RECORD_YEAR as YEAR(date) comment='Year of the HR record',
+		HR_RECORDS.RECORD_DATE as date with synonyms=('date','record date','snapshot date') comment='Date of the team record snapshot',
+		HR_RECORDS.RECORD_MONTH as MONTH(date) comment='Month of the team record',
+		HR_RECORDS.RECORD_YEAR as YEAR(date) comment='Year of the team record',
 		JOBS.JOB_KEY as JOB_KEY,
-		JOBS.JOB_LEVEL as job_level with synonyms=('level','grade','seniority') comment='Job level or grade',
-		JOBS.JOB_TITLE as job_title with synonyms=('job title','position','role') comment='Employee job title',
+		JOBS.JOB_LEVEL as job_level with synonyms=('level','grade','seniority','career level') comment='Job level (IC, Senior, Lead, Manager, Director)',
+		JOBS.JOB_TITLE as job_title with synonyms=('job title','position','role','job function') comment='Team member job title (Product Manager, Software Engineer, CS Rep, etc.)',
 		LOCATIONS.LOCATION_KEY as LOCATION_KEY,
-		LOCATIONS.LOCATION_NAME as location_name with synonyms=('location','office','site') comment='Work location'
+		LOCATIONS.LOCATION_NAME as location_name with synonyms=('location','office','work location','site') comment='Work location (HQ, Remote, Regional Office)'
 	)
 	metrics (
-		HR_RECORDS.ATTRITION_COUNT as SUM(hr_records.attrition_flag) comment='Number of employees who left',
-		HR_RECORDS.AVG_SALARY as AVG(hr_records.employee_salary) comment='average employee salary',
-		HR_RECORDS.TOTAL_EMPLOYEES as COUNT(hr_records.employee_record) comment='Total number of employees',
-		HR_RECORDS.TOTAL_SALARY_COST as SUM(hr_records.EMPLOYEE_SALARY) comment='Total salary cost'
+		HR_RECORDS.ATTRITION_COUNT as SUM(hr_records.attrition_flag) comment='Number of team members who left',
+		HR_RECORDS.AVG_SALARY as AVG(hr_records.employee_salary) comment='Average team member salary',
+		HR_RECORDS.TOTAL_EMPLOYEES as COUNT(hr_records.employee_record) comment='Total number of team members',
+		HR_RECORDS.TOTAL_SALARY_COST as SUM(hr_records.EMPLOYEE_SALARY) comment='Total team compensation cost'
 	)
-	comment='Semantic view for HR analytics and workforce management'
+	comment='Semantic view for DAVE team performance analytics - tracks team composition, staffing levels, and organizational metrics'
 	with extension (CA='{"tables":[{"name":"DEPARTMENTS","dimensions":[{"name":"DEPARTMENT_KEY"},{"name":"DEPARTMENT_NAME","sample_values":["Finance","Accounting","Treasury"]}]},{"name":"EMPLOYEES","dimensions":[{"name":"EMPLOYEE_KEY"},{"name":"EMPLOYEE_NAME","sample_values":["Grant Frey","Elizabeth George","Olivia Mcdaniel"]},{"name":"GENDER"},{"name":"HIRE_DATE"}]},{"name":"HR_RECORDS","dimensions":[{"name":"DEPARTMENT_KEY"},{"name":"EMPLOYEE_KEY"},{"name":"HR_FACT_ID"},{"name":"JOB_KEY"},{"name":"LOCATION_KEY"},{"name":"RECORD_DATE"},{"name":"RECORD_MONTH"},{"name":"RECORD_YEAR"}],"facts":[{"name":"ATTRITION_FLAG","sample_values":["0","1"]},{"name":"EMPLOYEE_RECORD"},{"name":"EMPLOYEE_SALARY"}],"metrics":[{"name":"ATTRITION_COUNT"},{"name":"AVG_SALARY"},{"name":"TOTAL_EMPLOYEES"},{"name":"TOTAL_SALARY_COST"}]},{"name":"JOBS","dimensions":[{"name":"JOB_KEY"},{"name":"JOB_LEVEL"},{"name":"JOB_TITLE"}]},{"name":"LOCATIONS","dimensions":[{"name":"LOCATION_KEY"},{"name":"LOCATION_NAME"}]}],"relationships":[{"name":"HR_TO_DEPARTMENTS","relationship_type":"many_to_one"},{"name":"HR_TO_EMPLOYEES","relationship_type":"many_to_one"},{"name":"HR_TO_JOBS","relationship_type":"many_to_one"},{"name":"HR_TO_LOCATIONS","relationship_type":"many_to_one"}],"verified_queries":[{"name":"List of all active employees","question":"List of all active employees","sql":"select\\n  h.employee_key,\\n  e.employee_name,\\nfrom\\n  employees e\\n  left join hr_records h on e.employee_key = h.employee_key\\ngroup by\\n  all\\nhaving\\n  sum(h.attrition_flag) = 0;","use_as_onboarding_question":false,"verified_by":"Nick Akincilar","verified_at":1753846263},{"name":"List of all inactive employees","question":"List of all inactive employees","sql":"SELECT\\n  h.employee_key,\\n  e.employee_name\\nFROM\\n  employees AS e\\n  LEFT JOIN hr_records AS h ON e.employee_key = h.employee_key\\nGROUP BY\\n  ALL\\nHAVING\\n  SUM(h.attrition_flag) > 0","use_as_onboarding_question":false,"verified_by":"Nick Akincilar","verified_at":1753846300}],"custom_instructions":"- Each employee can have multiple hr_employee_fact records. \\n- Only one hr_employee_fact record per employee is valid and that is the one which has the highest date value."}');
   -- ========================================================================
   -- VERIFICATION
@@ -815,34 +847,31 @@ create or replace semantic view SF_AI_DEMO.DEMO_SCHEMA.HR_SEMANTIC_VIEW
     -- ========================================================================
     -- UNSTRUCTURED DATA
     -- ========================================================================
-create or replace table parsed_content as 
-select 
-   
+CREATE OR REPLACE TABLE parsed_content AS 
+SELECT 
     relative_path, 
-    BUILD_STAGE_FILE_URL('@SF_AI_DEMO.DEMO_SCHEMA.INTERNAL_DATA_STAGE', relative_path) as file_url,
-     TO_File(BUILD_STAGE_FILE_URL('@SF_AI_DEMO.DEMO_SCHEMA.INTERNAL_DATA_STAGE', relative_path) ) file_object,
-        SNOWFLAKE.CORTEX.PARSE_DOCUMENT(
-                                    @SF_AI_DEMO.DEMO_SCHEMA.INTERNAL_DATA_STAGE,
-                                    relative_path,
-                                    {'mode':'LAYOUT'}
-                                    ):content::string as Content
-
-    
-    from directory(@SF_AI_DEMO.DEMO_SCHEMA.INTERNAL_DATA_STAGE) 
-where relative_path ilike 'unstructured_docs/%.pdf' ;
+    BUILD_STAGE_FILE_URL('@DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.INTERNAL_DATA_STAGE', relative_path) AS file_url,
+    TO_File(BUILD_STAGE_FILE_URL('@DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.INTERNAL_DATA_STAGE', relative_path)) AS file_object,
+    SNOWFLAKE.CORTEX.PARSE_DOCUMENT(
+        @DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.INTERNAL_DATA_STAGE,
+        relative_path,
+        {'mode':'LAYOUT'}
+    ):content::string AS Content
+FROM directory(@DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.INTERNAL_DATA_STAGE) 
+WHERE relative_path ILIKE 'unstructured_docs/%.pdf';
 
 --select *, GET_PATH(PARSE_JSON(content), 'content')::string as extracted_content from parsed_content;
 
 
-    -- Switch to admin role for remaining operations
-    USE ROLE SF_Intelligence_Demo;
+    -- Switch to DAVE demo role for remaining operations
+    USE ROLE DAVE_Intelligence_Demo;
 
     -- Create search service for finance documents
     -- This enables semantic search over finance-related content
     CREATE OR REPLACE CORTEX SEARCH SERVICE Search_finance_docs
         ON content
         ATTRIBUTES relative_path, file_url, title
-        WAREHOUSE = SNOW_INTELLIGENCE_DEMO_WH
+        WAREHOUSE = DAVE_INTELLIGENCE_DEMO_WH
         TARGET_LAG = '30 day'
         EMBEDDING_MODEL = 'snowflake-arctic-embed-l-v2.0'
         AS (
@@ -860,7 +889,7 @@ where relative_path ilike 'unstructured_docs/%.pdf' ;
     CREATE OR REPLACE CORTEX SEARCH SERVICE Search_hr_docs
         ON content
         ATTRIBUTES relative_path, file_url, title
-        WAREHOUSE = SNOW_INTELLIGENCE_DEMO_WH
+        WAREHOUSE = DAVE_INTELLIGENCE_DEMO_WH
         TARGET_LAG = '30 day'
         EMBEDDING_MODEL = 'snowflake-arctic-embed-l-v2.0'
         AS (
@@ -878,7 +907,7 @@ where relative_path ilike 'unstructured_docs/%.pdf' ;
     CREATE OR REPLACE CORTEX SEARCH SERVICE Search_marketing_docs
         ON content
         ATTRIBUTES relative_path, file_url, title
-        WAREHOUSE = SNOW_INTELLIGENCE_DEMO_WH
+        WAREHOUSE = DAVE_INTELLIGENCE_DEMO_WH
         TARGET_LAG = '30 day'
         EMBEDDING_MODEL = 'snowflake-arctic-embed-l-v2.0'
         AS (
@@ -896,7 +925,7 @@ where relative_path ilike 'unstructured_docs/%.pdf' ;
     CREATE OR REPLACE CORTEX SEARCH SERVICE Search_sales_docs
         ON content
         ATTRIBUTES relative_path, file_url, title
-        WAREHOUSE = SNOW_INTELLIGENCE_DEMO_WH
+        WAREHOUSE = DAVE_INTELLIGENCE_DEMO_WH
         TARGET_LAG = '30 day'
         EMBEDDING_MODEL = 'snowflake-arctic-embed-l-v2.0'
         AS (
@@ -910,42 +939,42 @@ where relative_path ilike 'unstructured_docs/%.pdf' ;
         );
 
 
-use role sf_intelligence_demo;
+USE ROLE DAVE_intelligence_demo;
 
 
   -- NETWORK rule is part of db schema
-CREATE OR REPLACE NETWORK RULE Snowflake_intelligence_WebAccessRule
+CREATE OR REPLACE NETWORK RULE DAVE_intelligence_WebAccessRule
   MODE = EGRESS
   TYPE = HOST_PORT
   VALUE_LIST = ('0.0.0.0:80', '0.0.0.0:443');
 
 
-use role accountadmin;
+USE ROLE accountadmin;
 
-GRANT ALL PRIVILEGES ON DATABASE SF_AI_DEMO TO ROLE ACCOUNTADMIN;
-GRANT ALL PRIVILEGES ON SCHEMA SF_AI_DEMO.DEMO_SCHEMA TO ROLE ACCOUNTADMIN;
-GRANT USAGE ON NETWORK RULE snowflake_intelligence_webaccessrule TO ROLE accountadmin;
+GRANT ALL PRIVILEGES ON DATABASE DAVE_AI_DEMO TO ROLE ACCOUNTADMIN;
+GRANT ALL PRIVILEGES ON SCHEMA DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS TO ROLE ACCOUNTADMIN;
+GRANT USAGE ON NETWORK RULE DAVE_intelligence_webaccessrule TO ROLE accountadmin;
 
-USE SCHEMA SF_AI_DEMO.DEMO_SCHEMA;
+USE SCHEMA DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS;
 
-CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION Snowflake_intelligence_ExternalAccess_Integration
-ALLOWED_NETWORK_RULES = (Snowflake_intelligence_WebAccessRule)
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION DAVE_intelligence_ExternalAccess_Integration
+ALLOWED_NETWORK_RULES = (DAVE_intelligence_WebAccessRule)
 ENABLED = true;
 
 CREATE NOTIFICATION INTEGRATION ai_email_int
   TYPE=EMAIL
   ENABLED=TRUE;
 
-GRANT USAGE ON DATABASE snowflake_intelligence TO ROLE SF_Intelligence_Demo;
-GRANT USAGE ON SCHEMA snowflake_intelligence.agents TO ROLE SF_Intelligence_Demo;
-GRANT CREATE AGENT ON SCHEMA snowflake_intelligence.agents TO ROLE SF_Intelligence_Demo;
+GRANT USAGE ON DATABASE snowflake_intelligence TO ROLE DAVE_Intelligence_Demo;
+GRANT USAGE ON SCHEMA snowflake_intelligence.agents TO ROLE DAVE_Intelligence_Demo;
+GRANT CREATE AGENT ON SCHEMA snowflake_intelligence.agents TO ROLE DAVE_Intelligence_Demo;
 
-GRANT USAGE ON INTEGRATION Snowflake_intelligence_ExternalAccess_Integration TO ROLE SF_Intelligence_Demo;
+GRANT USAGE ON INTEGRATION DAVE_intelligence_ExternalAccess_Integration TO ROLE DAVE_Intelligence_Demo;
 
-GRANT USAGE ON INTEGRATION AI_EMAIL_INT TO ROLE SF_INTELLIGENCE_DEMO;
+GRANT USAGE ON INTEGRATION AI_EMAIL_INT TO ROLE DAVE_INTELLIGENCE_DEMO;
 
 
-use role SF_Intelligence_Demo;
+USE ROLE DAVE_Intelligence_Demo;
 -- CREATES A SNOWFLAKE INTELLIGENCE AGENT WITH MULTIPLE TOOLS
 
 -- Create stored procedure to generate presigned URLs for files in internal stages
@@ -963,7 +992,7 @@ DECLARE
     presigned_url STRING;
     sql_stmt STRING;
     expiration_seconds INTEGER;
-    stage_name STRING DEFAULT '@SF_AI_DEMO.DEMO_SCHEMA.INTERNAL_DATA_STAGE';
+    stage_name STRING DEFAULT '@DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.INTERNAL_DATA_STAGE';
 BEGIN
     expiration_seconds := EXPIRATION_MINS * 60;
 
@@ -1007,7 +1036,7 @@ RETURNS STRING
 LANGUAGE PYTHON
 RUNTIME_VERSION = 3.11
 HANDLER = 'get_page'
-EXTERNAL_ACCESS_INTEGRATIONS = (Snowflake_intelligence_ExternalAccess_Integration)
+EXTERNAL_ACCESS_INTEGRATIONS = (DAVE_intelligence_ExternalAccess_Integration)
 PACKAGES = ('requests', 'beautifulsoup4')
 --SECRETS = ('cred' = oauth_token )
 AS
@@ -1024,20 +1053,35 @@ def get_page(weburl):
 $$;
 
 
-CREATE OR REPLACE AGENT SNOWFLAKE_INTELLIGENCE.AGENTS.Company_Chatbot_Agent_Retail
-WITH PROFILE='{ "display_name": "1-Company Chatbot Agent - Retail" }'
-    COMMENT=$$ This is an agent that can answer questions about company specific Sales, Marketing, HR & Finance questions. $$
+CREATE OR REPLACE AGENT SNOWFLAKE_INTELLIGENCE.AGENTS.DAVE_Product_Analytics_Agent
+WITH PROFILE='{ "display_name": "DAVE Product Analytics Agent" }'
+    COMMENT=$$ This is a product analytics agent for DAVE Operating Co that can answer questions about customer app usage, product adoption, user engagement, and financial transactions. $$
 FROM SPECIFICATION $$
 {
   "models": {
     "orchestration": ""
   },
   "instructions": {
-    "response": "You are a data analyst who has access to sales, finance, marketing & HR datamarts.  If user does not specify a date range assume it for year 2025. Leverage data from all domains to analyse & answer user questions. Provide visualizations if possible. Trendlines should default to linecharts, Categories Barchart.",
-    "orchestration": "Use cortex search for known entities and pass the results to cortex analyst for detailed analysis.\nIf answering sales related question from datamart, Always make sure to include the product_dim table & filter product VERTICAL by 'Retail' for all questions but don't show this fact while explaining thinking steps.\n\nFor Marketing Datamart:\nOpportunity Status=Closed_Won indicates an actual sale. \nSalesID in marketing datamart links an opportunity to a Sales record in Sales Datamart SalesID columns\n\n\n",
+    "response": "You are a product analytics specialist for DAVE, a financial technology company. You have access to customer app usage, product adoption, user engagement, transaction data, and customer support analytics. If user does not specify a date range, assume it for year 2025. Leverage data from all domains to analyze & answer user questions about how customers are using DAVE's app and products. Provide visualizations when possible. Trendlines should default to linecharts, categorical data to barcharts. Focus on actionable insights for the product team.",
+    "orchestration": "Use cortex search for known entities and pass the results to cortex analyst for detailed analysis.\n\nKey Context for DAVE:\n- Sales data represents product transactions (ExtraCash advances, subscription fees, tips)\n- Customers are app users\n- Products represent DAVE services and features (ExtraCash, Banking, Budgeting, Credit Builder)\n- Marketing campaigns represent user acquisition and retention campaigns\n- Finance data includes transaction processing, fees, and revenue\n\nWhen analyzing product metrics:\n- Focus on user engagement, feature adoption, and transaction patterns\n- Consider cohort analysis for user behavior\n- Look for churn indicators and product stickiness\n- Analyze revenue per user and lifetime value\n\n",
     "sample_questions": [
       {
-        "question": "What are our monthly sales last 12 months?"
+        "question": "What are the top 5 most used features by active users?"
+      },
+      {
+        "question": "Show me user engagement trends over the last 6 months"
+      },
+      {
+        "question": "What is our average revenue per user (ARPU) by product?"
+      },
+      {
+        "question": "Which customer segments have the highest churn rate?"
+      },
+      {
+        "question": "How is ExtraCash product adoption trending?"
+      },
+      {
+        "question": "What are the most common user support issues?"
       }
     ]
   },
@@ -1045,57 +1089,57 @@ FROM SPECIFICATION $$
     {
       "tool_spec": {
         "type": "cortex_analyst_text_to_sql",
-        "name": "Query Finance Datamart",
-        "description": "Allows users to query finance data for a company in terms of revenue & expenses."
+        "name": "Query Transaction Analytics",
+        "description": "Analyze DAVE financial transactions including ExtraCash advances, subscription fees, tips, and revenue. Provides insights into transaction volumes, amounts, and patterns by product type, customer segment, and time period."
       }
     },
     {
       "tool_spec": {
         "type": "cortex_analyst_text_to_sql",
-        "name": "Query Sales Datamart",
-        "description": "Allows users to query Sales data for a company in terms of Sales data such as products, sales reps & etc. "
+        "name": "Query Product Usage Analytics",
+        "description": "Analyze DAVE app product usage and adoption metrics. Track which features (ExtraCash, Banking, Budgeting, Credit Builder) are being used, by which users, how frequently, and transaction volumes. Includes data on active users, feature adoption rates, and product engagement."
       }
     },
     {
       "tool_spec": {
         "type": "cortex_analyst_text_to_sql",
-        "name": "Query HR Datamart",
-        "description": "Allows users to query HR data for a company in terms of HR related employee data. employee_name column also contains names of sales_reps."
+        "name": "Query Team Performance",
+        "description": "Query team and employee data including customer success teams, support staff, and product teams. Analyze team performance metrics and staffing levels. employee_name column also contains names of customer success representatives."
       }
     },
     {
       "tool_spec": {
         "type": "cortex_analyst_text_to_sql",
-        "name": "Query Marketing Datamart",
-        "description": "Allows users to query Marketing data in terms of campaigns, channels, impressions, spend & etc."
+        "name": "Query User Acquisition & Retention",
+        "description": "Analyze user acquisition campaigns, retention efforts, channel performance (social media, referrals, paid ads), and user engagement metrics. Track campaign effectiveness, user acquisition costs, and retention rates."
       }
     },
     {
       "tool_spec": {
         "type": "cortex_search",
-        "name": "Search Internal Documents: Finance",
-        "description": ""
+        "name": "Search Financial Policies & Reports",
+        "description": "Search DAVE's financial policies, transaction processing guidelines, expense policies, vendor contracts, and financial reports. Useful for understanding fee structures, revenue models, and financial operations."
       }
     },
     {
       "tool_spec": {
         "type": "cortex_search",
-        "name": "Search Internal Documents: HR",
-        "description": ""
+        "name": "Search Team & Operations Docs",
+        "description": "Search internal documents related to team operations, employee handbooks, performance guidelines, and organizational structure. Useful for understanding team processes and operational procedures."
       }
     },
     {
       "tool_spec": {
         "type": "cortex_search",
-        "name": "Search Internal Documents: Sales",
-        "description": ""
+        "name": "Search Product Documentation",
+        "description": "Search product documentation, feature specifications, user guides, product playbooks, and customer success materials. Essential for understanding product functionality, feature rollouts, and customer-facing materials."
       }
     },
     {
       "tool_spec": {
         "type": "cortex_search",
-        "name": "Search Internal Documents: Marketing",
-        "description": "This tools should be used to search unstructured docs related to marketing department.\n\nAny reference docs in ID columns should be passed to Dynamic URL tool to generate a downloadable URL for users in the response"
+        "name": "Search User Acquisition Materials",
+        "description": "Search documents related to user acquisition strategies, marketing campaigns, channel performance reports, and growth initiatives. Any reference docs in ID columns should be passed to Dynamic URL tool to generate a downloadable URL for users in the response"
       }
     },
     {
@@ -1176,55 +1220,55 @@ FROM SPECIFICATION $$
       "execution_environment": {
         "query_timeout": 0,
         "type": "warehouse",
-        "warehouse": "SNOW_INTELLIGENCE_DEMO_WH"
+        "warehouse": "DAVE_INTELLIGENCE_DEMO_WH"
       },
-      "identifier": "SF_AI_DEMO.DEMO_SCHEMA.GET_FILE_PRESIGNED_URL_SP",
+      "identifier": "DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.GET_FILE_PRESIGNED_URL_SP",
       "name": "GET_FILE_PRESIGNED_URL_SP(VARCHAR, DEFAULT NUMBER)",
       "type": "procedure"
     },
-    "Query Finance Datamart": {
-      "semantic_view": "SF_AI_DEMO.DEMO_SCHEMA.FINANCE_SEMANTIC_VIEW"
+    "Query Transaction Analytics": {
+      "semantic_view": "DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.FINANCE_SEMANTIC_VIEW"
     },
-    "Query HR Datamart": {
-      "semantic_view": "SF_AI_DEMO.DEMO_SCHEMA.HR_SEMANTIC_VIEW"
+    "Query Team Performance": {
+      "semantic_view": "DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.HR_SEMANTIC_VIEW"
     },
-    "Query Marketing Datamart": {
-      "semantic_view": "SF_AI_DEMO.DEMO_SCHEMA.MARKETING_SEMANTIC_VIEW"
+    "Query User Acquisition & Retention": {
+      "semantic_view": "DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.MARKETING_SEMANTIC_VIEW"
     },
-    "Query Sales Datamart": {
-      "semantic_view": "SF_AI_DEMO.DEMO_SCHEMA.SALES_SEMANTIC_VIEW"
+    "Query Product Usage Analytics": {
+      "semantic_view": "DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.SALES_SEMANTIC_VIEW"
     },
-    "Search Internal Documents: Finance": {
+    "Search Financial Policies & Reports": {
       "id_column": "FILE_URL",
       "max_results": 5,
-      "name": "SF_AI_DEMO.DEMO_SCHEMA.SEARCH_FINANCE_DOCS",
+      "name": "DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.SEARCH_FINANCE_DOCS",
       "title_column": "TITLE"
     },
-    "Search Internal Documents: HR": {
+    "Search Team & Operations Docs": {
       "id_column": "FILE_URL",
       "max_results": 5,
-      "name": "SF_AI_DEMO.DEMO_SCHEMA.SEARCH_HR_DOCS",
+      "name": "DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.SEARCH_HR_DOCS",
       "title_column": "TITLE"
     },
-    "Search Internal Documents: Marketing": {
+    "Search User Acquisition Materials": {
       "id_column": "RELATIVE_PATH",
       "max_results": 5,
-      "name": "SF_AI_DEMO.DEMO_SCHEMA.SEARCH_MARKETING_DOCS",
+      "name": "DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.SEARCH_MARKETING_DOCS",
       "title_column": "TITLE"
     },
-    "Search Internal Documents: Sales": {
+    "Search Product Documentation": {
       "id_column": "FILE_URL",
       "max_results": 5,
-      "name": "SF_AI_DEMO.DEMO_SCHEMA.SEARCH_SALES_DOCS",
+      "name": "DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.SEARCH_SALES_DOCS",
       "title_column": "TITLE"
     },
     "Send_Emails": {
       "execution_environment": {
         "query_timeout": 0,
         "type": "warehouse",
-        "warehouse": "SNOW_INTELLIGENCE_DEMO_WH"
+        "warehouse": "DAVE_INTELLIGENCE_DEMO_WH"
       },
-      "identifier": "SF_AI_DEMO.DEMO_SCHEMA.SEND_MAIL",
+      "identifier": "DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.SEND_MAIL",
       "name": "SEND_MAIL(VARCHAR, VARCHAR, VARCHAR)",
       "type": "procedure"
     },
@@ -1232,9 +1276,9 @@ FROM SPECIFICATION $$
       "execution_environment": {
         "query_timeout": 0,
         "type": "warehouse",
-        "warehouse": "SNOW_INTELLIGENCE_DEMO_WH"
+        "warehouse": "DAVE_INTELLIGENCE_DEMO_WH"
       },
-      "identifier": "SF_AI_DEMO.DEMO_SCHEMA.WEB_SCRAPE",
+      "identifier": "DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.WEB_SCRAPE",
       "name": "WEB_SCRAPE(VARCHAR)",
       "type": "function"
     }

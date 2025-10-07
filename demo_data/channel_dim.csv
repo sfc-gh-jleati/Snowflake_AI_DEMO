@@ -1,5 +1,21 @@
 channel_key,channel_name
-600,Email
-602,Facebook
-603,Twitter
-604,TikTok
+600,Organic Search
+601,Paid Search (Google)
+602,Facebook Ads
+603,Instagram Ads
+604,TikTok Ads
+605,YouTube Ads
+606,Twitter/X Ads
+607,Referral Program
+608,App Store (iOS)
+609,Play Store (Android)
+610,Email Marketing
+611,Content Marketing
+612,Influencer Partnerships
+613,Podcast Advertising
+614,Display Advertising
+615,Affiliate Marketing
+616,Direct Traffic
+617,Social Media Organic
+618,PR & Media
+619,Partnership Integration
