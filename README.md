@@ -26,6 +26,40 @@ This demo is specifically designed for **DAVE's Product and Executive Teams** to
 2. Select **"DAVE Product Analytics Agent"**
 3. Start asking questions in natural language!
 
+## 💡 What Insights the Data Reveals
+
+The sample data has been crafted to reveal **compelling, realistic insights** that will resonate with DAVE's teams:
+
+### 🏆 **ExtraCash Dominates** (65% of transactions)
+- Most popular amounts: $75-$100 (the sweet spot)
+- Clear product-market fit with gig economy
+- Drives 65% of all revenue
+
+### 👥 **Gig Workers Are Core Users** (40% of users, 50%+ of transactions)
+- Highest transaction frequency
+- Weekend activity spikes (payday patterns)
+- Prefer $50-$150 ExtraCash range
+
+### 💎 **Young Professionals = Highest Value** ($250-450 LTV)
+- 25% of user base
+- Most likely to be Premium tier
+- Growing segment with best unit economics
+
+### 🎯 **Referral Program = Best ROI** ($15-30 CAC, 70% activation)
+- 10:1 LTV:CAC ratio (clear winner)
+- Instagram high volume but medium CAC ($40-60)
+- Paid Search scalable but expensive ($60-85 CAC)
+
+### 🛠️ **Budgeting Tools Drive Retention**
+- 15% overall adoption
+- Students love it (30%+ usage rate)
+- Multi-product users have 40% higher LTV
+
+### 💰 **Tips Show Satisfaction** (60%+ adoption, $3.50 average)
+- 15% of total revenue
+- Premium users tip more
+- Validates user satisfaction
+
 ## 🎬 Demo Script - Sample Questions
 
 ### 1. Product Usage Analytics (5 minutes)
