@@ -42,11 +42,13 @@ What are the top 5 most used DAVE features by transaction volume? Show me the br
 ```
 
 **What You'll See:**
-- ExtraCash advances dominate (65% of all transactions)
-- $75-$100 advances are the most popular amounts
-- ExtraCash is THE killer feature
+- **#1: ExtraCash $75** - 3,168 transactions (20% of all activity!)
+- **#2: ExtraCash $100** - 2,452 transactions (15%)
+- **#3: ExtraCash $50** - 1,625 transactions (10%)
+- Top 3 alone = 45% of all transactions
+- Overall ExtraCash = 70% of all activity
 
-**Why This Matters**: Validates product-market fit and shows where to focus development
+**Why This Matters**: Clear product-market fit - ExtraCash isn't just popular, it's DOMINANT. The $75-$100 range is the sweet spot. This guides pricing, limits, and product strategy.
 
 ---
 
@@ -113,9 +115,10 @@ Send me an email summary of this chat to your.email@company.com
 The demo uses realistic sample data that tells a compelling story:
 
 ### Product Insights
-- **ExtraCash = #1 Product**: 65% of transactions, 65% of revenue
-- **Most Popular Amounts**: $75-$100 (the sweet spot for users)
-- **Budgeting Growing**: 15% adoption, drives 40% higher retention
+- **ExtraCash = THE Dominant Product**: 70% of all transactions
+- **Top 3 Products (all ExtraCash)**: $75 (20%), $100 (15%), $50 (10%) = 45% of activity
+- **Sweet Spot Identified**: $75-$100 range is the clear winner
+- **Budgeting Strong Second**: 10% adoption, drives retention
 - **Tips = Satisfaction**: 60% of users tip, average $3.50
 
 ### User Insights
