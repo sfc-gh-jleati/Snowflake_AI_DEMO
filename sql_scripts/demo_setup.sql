@@ -595,11 +595,11 @@ CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.FINANCE_SEMA
         TRANSACTIONS_TO_CUSTOMERS as TRANSACTIONS(CUSTOMER_KEY) references CUSTOMERS(CUSTOMER_KEY)
     )
     facts (
-        TRANSACTIONS.TRANSACTION_AMOUNT as amount comment='Transaction amount in dollars (ExtraCash advances, fees, tips, subscriptions)',
+        TRANSACTIONS.AMOUNT as amount comment='Transaction amount in dollars (ExtraCash advances, fees, tips, subscriptions)',
         TRANSACTIONS.TRANSACTION_RECORD as 1 comment='Count of transactions'
     )
     dimensions (
-        TRANSACTIONS.TRANSACTION_DATE as date with synonyms=('date','transaction date','payment date') comment='Date of the financial transaction',
+        TRANSACTIONS.DATE as date with synonyms=('date','transaction date','payment date') comment='Date of the financial transaction',
         TRANSACTIONS.TRANSACTION_MONTH as MONTH(date) comment='Month of the transaction',
         TRANSACTIONS.TRANSACTION_YEAR as YEAR(date) comment='Year of the transaction',
         ACCOUNTS.ACCOUNT_NAME as account_name with synonyms=('transaction category','account type','revenue type') comment='Transaction category (ExtraCash, Subscription, Tip, Express Fee, etc.)',
@@ -638,12 +638,12 @@ CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.SALES_SEMANT
 		SALES_TO_REGIONS as SALES(REGION_KEY) references REGIONS(REGION_KEY)
 	)
 	facts (
-		SALES.SALE_AMOUNT as amount comment='Transaction amount in dollars - includes ExtraCash advances, subscription fees, tips, and other revenue',
+		SALES.AMOUNT as amount comment='Transaction amount in dollars - includes ExtraCash advances, subscription fees, tips, and other revenue',
 		SALES.SALE_RECORD as 1 comment='Count of product usage transactions',
-		SALES.UNITS_SOLD as units comment='Number of transaction units or feature usages'
+		SALES.UNITS as units comment='Number of transaction units or feature usages'
 	)
 	dimensions (
-		CUSTOMERS.CUSTOMER_INDUSTRY as INDUSTRY with synonyms=('user segment','customer type','user category') comment='User demographic segment or type',
+		CUSTOMERS.INDUSTRY as INDUSTRY with synonyms=('user segment','customer type','user category','customer industry') comment='User demographic segment or type',
 		CUSTOMERS.CUSTOMER_KEY as CUSTOMER_KEY,
 		CUSTOMERS.CUSTOMER_NAME as customer_name with synonyms=('user','member','customer','app user') comment='App user identifier or name',
 		PRODUCTS.CATEGORY_KEY as CATEGORY_KEY with synonyms=('category_id','product_category','feature_category','service_category','product_line_id') comment='Unique identifier for the product/feature category.',
@@ -657,7 +657,7 @@ CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.SALES_SEMANT
 		SALES.CUSTOMER_KEY as CUSTOMER_KEY,
 		SALES.PRODUCT_KEY as PRODUCT_KEY,
 		SALES.REGION_KEY as REGION_KEY,
-		SALES.SALE_DATE as date with synonyms=('date','transaction date','usage date','activity date') comment='Date when user engaged with the product/feature',
+		SALES.DATE as date with synonyms=('date','transaction date','usage date','activity date','sale date') comment='Date when user engaged with the product/feature',
 		SALES.SALE_ID as SALE_ID,
 		SALES.SALE_MONTH as MONTH(date) comment='Month of the product usage',
 		SALES.SALE_YEAR as YEAR(date) comment='Year of the product usage'
@@ -670,7 +670,7 @@ CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.SALES_SEMANT
 		SALES.TOTAL_UNITS as SUM(sales.units) comment='Total usage volume across all transactions'
 	)
 	comment='Semantic view for DAVE product usage analytics - tracks app user engagement, feature adoption, and transaction patterns (B2C model - no sales reps or vendors)'
-	with extension (CA='{"tables":[{"name":"CUSTOMERS","dimensions":[{"name":"CUSTOMER_KEY"},{"name":"CUSTOMER_NAME","sample_values":["User_000001","User_000002","User_000003"]},{"name":"Customer_Industry","sample_values":["Young Professional","Gig Worker","Student"]}]},{"name":"PRODUCTS","dimensions":[{"name":"CATEGORY_KEY","unique":false},{"name":"PRODUCT_KEY"},{"name":"PRODUCT_NAME","sample_values":["ExtraCash Advance $75","Dave Banking Account","Budgeting - Goals"]}]},{"name":"PRODUCT_CATEGORY_DIM","dimensions":[{"name":"CATEGORY_KEY","sample_values":["1","2","3"]},{"name":"CATEGORY_NAME","sample_values":["Cash Advances","Banking Services","Budgeting Tools"]},{"name":"VERTICAL","sample_values":["Financial Services","Financial Services","Financial Tools"]}]},{"name":"REGIONS","dimensions":[{"name":"REGION_KEY"},{"name":"REGION_NAME","sample_values":["North","South","West"]}]},{"name":"SALES","dimensions":[{"name":"CUSTOMER_KEY"},{"name":"PRODUCT_KEY"},{"name":"REGION_KEY"},{"name":"SALE_DATE","sample_values":["2024-01-01","2024-01-02","2024-01-03"]},{"name":"SALE_ID"},{"name":"SALE_MONTH"},{"name":"SALE_YEAR"}],"facts":[{"name":"SALE_AMOUNT"},{"name":"SALE_RECORD"},{"name":"UNITS_SOLD"}],"metrics":[{"name":"AVERAGE_DEAL_SIZE"},{"name":"AVERAGE_UNITS_PER_SALE"},{"name":"TOTAL_DEALS"},{"name":"TOTAL_REVENUE"},{"name":"TOTAL_UNITS"}]}],"relationships":[{"name":"PRODUCT_TO_CATEGORY"},{"name":"SALES_TO_CUSTOMERS","relationship_type":"many_to_one"},{"name":"SALES_TO_PRODUCTS","relationship_type":"many_to_one"},{"name":"SALES_TO_REGIONS","relationship_type":"many_to_one"}]}');
+	with extension (CA='{"tables":[{"name":"CUSTOMERS","dimensions":[{"name":"CUSTOMER_KEY"},{"name":"CUSTOMER_NAME","sample_values":["User_000001","User_000002","User_000003"]},{"name":"INDUSTRY","sample_values":["Young Professional","Gig Worker","Student"]}]},{"name":"PRODUCTS","dimensions":[{"name":"CATEGORY_KEY","unique":false},{"name":"PRODUCT_KEY"},{"name":"PRODUCT_NAME","sample_values":["ExtraCash Advance $75","Dave Banking Account","Budgeting - Goals"]}]},{"name":"PRODUCT_CATEGORY_DIM","dimensions":[{"name":"CATEGORY_KEY","sample_values":["1","2","3"]},{"name":"CATEGORY_NAME","sample_values":["Cash Advances","Banking Services","Budgeting Tools"]},{"name":"VERTICAL","sample_values":["Financial Services","Financial Services","Financial Tools"]}]},{"name":"REGIONS","dimensions":[{"name":"REGION_KEY"},{"name":"REGION_NAME","sample_values":["North","South","West"]}]},{"name":"SALES","dimensions":[{"name":"CUSTOMER_KEY"},{"name":"PRODUCT_KEY"},{"name":"REGION_KEY"},{"name":"DATE","sample_values":["2024-01-01","2024-01-02","2024-01-03"]},{"name":"SALE_ID"},{"name":"SALE_MONTH"},{"name":"SALE_YEAR"}],"facts":[{"name":"AMOUNT"},{"name":"SALE_RECORD"},{"name":"UNITS"}],"metrics":[{"name":"AVERAGE_DEAL_SIZE"},{"name":"AVERAGE_UNITS_PER_SALE"},{"name":"TOTAL_DEALS"},{"name":"TOTAL_REVENUE"},{"name":"TOTAL_UNITS"}]}],"relationships":[{"name":"PRODUCT_TO_CATEGORY"},{"name":"SALES_TO_CUSTOMERS","relationship_type":"many_to_one"},{"name":"SALES_TO_PRODUCTS","relationship_type":"many_to_one"},{"name":"SALES_TO_REGIONS","relationship_type":"many_to_one"}]}');
 
 
 -- ========================================================================
@@ -702,12 +702,12 @@ CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.MARKETING_SE
 	)
 	facts (
 		PUBLIC CAMPAIGNS.CAMPAIGN_RECORD as 1 comment='Count of campaign activities',
-		PUBLIC CAMPAIGNS.CAMPAIGN_SPEND as spend comment='User acquisition and retention spend in dollars (CAC - Customer Acquisition Cost)',
+		PUBLIC CAMPAIGNS.SPEND as spend comment='User acquisition and retention spend in dollars (CAC - Customer Acquisition Cost)',
 		PUBLIC CAMPAIGNS.IMPRESSIONS as IMPRESSIONS comment='Number of ad impressions or campaign reach',
 		PUBLIC CAMPAIGNS.LEADS_GENERATED as LEADS_GENERATED comment='Number of app downloads or signups generated',
 		PUBLIC CONTACTS.CONTACT_RECORD as 1 comment='Count of user signups generated',
 		PUBLIC OPPORTUNITIES.OPPORTUNITY_RECORD as 1 comment='Count of user activations (users who completed onboarding)',
-		PUBLIC OPPORTUNITIES.REVENUE as AMOUNT comment='Revenue generated from activated users'
+		PUBLIC OPPORTUNITIES.AMOUNT as AMOUNT comment='Revenue generated from activated users'
 	)
 	dimensions (
 		PUBLIC ACCOUNTS.ACCOUNT_ID as ACCOUNT_ID,
@@ -716,8 +716,8 @@ CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.MARKETING_SE
 		PUBLIC ACCOUNTS.ANNUAL_REVENUE as ANNUAL_REVENUE with synonyms=('user ltv','lifetime value','user revenue','total value','LTV') comment='Lifetime value (LTV) - total revenue generated from this user',
 		PUBLIC ACCOUNTS.EMPLOYEES as EMPLOYEES with synonyms=('household size','family members','dependents') comment='Number of people in user household',
 		PUBLIC ACCOUNTS.INDUSTRY as INDUSTRY with synonyms=('user segment','demographic segment','user category','user type') comment='User demographic segment (Young Professional, Gig Worker, Student, etc.)',
-		PUBLIC ACCOUNTS.SALES_CUSTOMER_KEY as CUSTOMER_KEY with synonyms=('User ID','Member ID','Customer Key') comment='User key that links to the app users table.',
-		PUBLIC CAMPAIGNS.CAMPAIGN_DATE as date with synonyms=('date','campaign date','activity date') comment='Date of the acquisition or retention campaign activity',
+		PUBLIC ACCOUNTS.CUSTOMER_KEY as CUSTOMER_KEY with synonyms=('User ID','Member ID','Customer Key') comment='User key that links to the app users table.',
+		PUBLIC CAMPAIGNS.DATE as date with synonyms=('date','campaign date','activity date') comment='Date of the acquisition or retention campaign activity',
 		PUBLIC CAMPAIGNS.CAMPAIGN_FACT_ID as CAMPAIGN_FACT_ID,
 		PUBLIC CAMPAIGNS.CAMPAIGN_KEY as CAMPAIGN_KEY,
 		PUBLIC CAMPAIGNS.CAMPAIGN_MONTH as MONTH(date) comment='Month of the campaign',
@@ -748,11 +748,11 @@ CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.MARKETING_SE
 		PUBLIC OPPORTUNITIES.OPPORTUNITY_NAME as OPPORTUNITY_NAME with synonyms=('user activation','conversion event','onboarding completion') comment='User activation or conversion event',
 		PUBLIC OPPORTUNITIES.OPPORTUNITY_STAGE as STAGE_NAME comment='User activation stage. Closed Won indicates a fully activated user who has completed onboarding',
 		PUBLIC OPPORTUNITIES.OPPORTUNITY_TYPE as TYPE with synonyms=('activation type','user type','conversion type') comment='Type of user activation or conversion',
-		PUBLIC OPPORTUNITIES.SALES_SALE_ID as SALE_ID with synonyms=('transaction id','usage id') comment='Transaction ID linking user activation to first product usage',
-		PUBLIC PRODUCTS.PRODUCT_CATEGORY as CATEGORY_NAME with synonyms=('category','product category') comment='Category of the product',
+		PUBLIC OPPORTUNITIES.SALE_ID as SALE_ID with synonyms=('transaction id','usage id') comment='Transaction ID linking user activation to first product usage',
+		PUBLIC PRODUCTS.CATEGORY_NAME as CATEGORY_NAME with synonyms=('category','product category') comment='Category of the product',
 		PUBLIC PRODUCTS.PRODUCT_KEY as PRODUCT_KEY,
 		PUBLIC PRODUCTS.PRODUCT_NAME as PRODUCT_NAME with synonyms=('product','item','product title') comment='Name of the product being promoted',
-		PUBLIC PRODUCTS.PRODUCT_VERTICAL as VERTICAL with synonyms=('vertical','industry') comment='Business vertical of the product',
+		PUBLIC PRODUCTS.VERTICAL as VERTICAL with synonyms=('vertical','industry','product vertical') comment='Business vertical of the product',
 		PUBLIC REGIONS.REGION_KEY as REGION_KEY,
 		PUBLIC REGIONS.REGION_NAME as REGION_NAME with synonyms=('region','market','territory') comment='Name of the region'
 	)
@@ -763,13 +763,13 @@ CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.MARKETING_SE
 		PUBLIC CAMPAIGNS.TOTAL_LEADS as SUM(CAMPAIGNS.leads_generated) comment='Total app downloads and signups generated from campaigns',
 		PUBLIC CAMPAIGNS.TOTAL_SPEND as SUM(CAMPAIGNS.spend) comment='Total user acquisition and retention spend',
 		PUBLIC CONTACTS.TOTAL_CONTACTS as COUNT(CONTACTS.contact_record) comment='Total user signups generated from campaigns',
-		PUBLIC OPPORTUNITIES.AVERAGE_DEAL_SIZE as AVG(OPPORTUNITIES.revenue) comment='Average revenue per activated user (ARPU)',
-		PUBLIC OPPORTUNITIES.CLOSED_WON_REVENUE as SUM(CASE WHEN OPPORTUNITIES.opportunity_stage = 'Closed Won' THEN OPPORTUNITIES.revenue ELSE 0 END) comment='Revenue from fully activated users',
+		PUBLIC OPPORTUNITIES.AVERAGE_DEAL_SIZE as AVG(OPPORTUNITIES.amount) comment='Average revenue per activated user (ARPU)',
+		PUBLIC OPPORTUNITIES.CLOSED_WON_REVENUE as SUM(CASE WHEN OPPORTUNITIES.stage_name = 'Closed Won' THEN OPPORTUNITIES.amount ELSE 0 END) comment='Revenue from fully activated users',
 		PUBLIC OPPORTUNITIES.TOTAL_OPPORTUNITIES as COUNT(OPPORTUNITIES.opportunity_record) comment='Total user activations from acquisition campaigns',
-		PUBLIC OPPORTUNITIES.TOTAL_REVENUE as SUM(OPPORTUNITIES.revenue) comment='Total revenue from campaign-acquired users'
+		PUBLIC OPPORTUNITIES.TOTAL_REVENUE as SUM(OPPORTUNITIES.amount) comment='Total revenue from campaign-acquired users'
 	)
 	comment='Semantic view for DAVE user acquisition & retention analytics - tracks campaign performance, user signups, activations, and conversion to revenue'
-	with extension (CA='{"tables":[{"name":"ACCOUNTS","dimensions":[{"name":"ACCOUNT_ID"},{"name":"ACCOUNT_NAME"},{"name":"ACCOUNT_TYPE"},{"name":"ANNUAL_REVENUE"},{"name":"EMPLOYEES"},{"name":"INDUSTRY"},{"name":"SALES_CUSTOMER_KEY"}]},{"name":"CAMPAIGNS","dimensions":[{"name":"CAMPAIGN_DATE"},{"name":"CAMPAIGN_FACT_ID"},{"name":"CAMPAIGN_KEY"},{"name":"CAMPAIGN_MONTH"},{"name":"CAMPAIGN_YEAR"},{"name":"CHANNEL_KEY"},{"name":"PRODUCT_KEY"},{"name":"REGION_KEY"}],"facts":[{"name":"CAMPAIGN_RECORD"},{"name":"CAMPAIGN_SPEND"},{"name":"IMPRESSIONS"},{"name":"LEADS_GENERATED"}],"metrics":[{"name":"AVERAGE_SPEND"},{"name":"TOTAL_CAMPAIGNS"},{"name":"TOTAL_IMPRESSIONS"},{"name":"TOTAL_LEADS"},{"name":"TOTAL_SPEND"}]},{"name":"CAMPAIGN_DETAILS","dimensions":[{"name":"CAMPAIGN_KEY"},{"name":"CAMPAIGN_NAME"},{"name":"CAMPAIGN_OBJECTIVE"}]},{"name":"CHANNELS","dimensions":[{"name":"CHANNEL_KEY"},{"name":"CHANNEL_NAME"}]},{"name":"CONTACTS","dimensions":[{"name":"ACCOUNT_ID"},{"name":"CAMPAIGN_NO"},{"name":"CONTACT_ID"},{"name":"DEPARTMENT"},{"name":"EMAIL"},{"name":"FIRST_NAME"},{"name":"LAST_NAME"},{"name":"LEAD_SOURCE"},{"name":"OPPORTUNITY_ID"},{"name":"TITLE"}],"facts":[{"name":"CONTACT_RECORD"}],"metrics":[{"name":"TOTAL_CONTACTS"}]},{"name":"CONTACTS_FOR_OPPORTUNITIES"},{"name":"OPPORTUNITIES","dimensions":[{"name":"ACCOUNT_ID"},{"name":"CAMPAIGN_ID"},{"name":"CLOSE_DATE"},{"name":"OPPORTUNITY_ID"},{"name":"OPPORTUNITY_LEAD_SOURCE"},{"name":"OPPORTUNITY_NAME"},{"name":"OPPORTUNITY_STAGE","sample_values":["Closed Won","Perception Analysis","Qualification"]},{"name":"OPPORTUNITY_TYPE"},{"name":"SALES_SALE_ID"}],"facts":[{"name":"OPPORTUNITY_RECORD"},{"name":"REVENUE"}],"metrics":[{"name":"AVERAGE_DEAL_SIZE"},{"name":"CLOSED_WON_REVENUE"},{"name":"TOTAL_OPPORTUNITIES"},{"name":"TOTAL_REVENUE"}]},{"name":"PRODUCTS","dimensions":[{"name":"PRODUCT_CATEGORY"},{"name":"PRODUCT_KEY"},{"name":"PRODUCT_NAME"},{"name":"PRODUCT_VERTICAL"}]},{"name":"REGIONS","dimensions":[{"name":"REGION_KEY"},{"name":"REGION_NAME"}]}],"relationships":[{"name":"CAMPAIGNS_TO_CHANNELS","relationship_type":"many_to_one"},{"name":"CAMPAIGNS_TO_DETAILS","relationship_type":"many_to_one"},{"name":"CAMPAIGNS_TO_PRODUCTS","relationship_type":"many_to_one"},{"name":"CAMPAIGNS_TO_REGIONS","relationship_type":"many_to_one"},{"name":"CONTACTS_TO_ACCOUNTS","relationship_type":"many_to_one"},{"name":"CONTACTS_TO_CAMPAIGNS","relationship_type":"many_to_one"},{"name":"CONTACTS_TO_OPPORTUNITIES","relationship_type":"many_to_one"},{"name":"OPPORTUNITIES_TO_ACCOUNTS","relationship_type":"many_to_one"},{"name":"OPPORTUNITIES_TO_CAMPAIGNS"}],"verified_queries":[{"name":"include opps that turned in to sales deal","question":"include opps that turned in to sales deal","sql":"WITH campaign_impressions AS (\\n  SELECT\\n    c.campaign_key,\\n    cd.campaign_name,\\n    SUM(c.impressions) AS total_impressions\\n  FROM\\n    campaigns AS c\\n    LEFT OUTER JOIN campaign_details AS cd ON c.campaign_key = cd.campaign_key\\n  WHERE\\n    c.campaign_year = 2025\\n  GROUP BY\\n    c.campaign_key,\\n    cd.campaign_name\\n),\\ncampaign_opportunities AS (\\n  SELECT\\n    c.campaign_key,\\n    COUNT(o.opportunity_record) AS total_opportunities,\\n    COUNT(\\n      CASE\\n        WHEN o.opportunity_stage = ''Closed Won'' THEN o.opportunity_record\\n      END\\n    ) AS closed_won_opportunities\\n  FROM\\n    campaigns AS c\\n    LEFT OUTER JOIN opportunities AS o ON c.campaign_fact_id = o.campaign_id\\n  WHERE\\n    c.campaign_year = 2025\\n  GROUP BY\\n    c.campaign_key\\n)\\nSELECT\\n  ci.campaign_name,\\n  ci.total_impressions,\\n  COALESCE(co.total_opportunities, 0) AS total_opportunities,\\n  COALESCE(co.closed_won_opportunities, 0) AS closed_won_opportunities\\nFROM\\n  campaign_impressions AS ci\\n  LEFT JOIN campaign_opportunities AS co ON ci.campaign_key = co.campaign_key\\nORDER BY\\n  ci.total_impressions DESC NULLS LAST","use_as_onboarding_question":false,"verified_by":"Nick Akincilar","verified_at":1757262696}]}');
+	with extension (CA='{"tables":[{"name":"ACCOUNTS","dimensions":[{"name":"ACCOUNT_ID"},{"name":"ACCOUNT_NAME"},{"name":"ACCOUNT_TYPE"},{"name":"ANNUAL_REVENUE"},{"name":"EMPLOYEES"},{"name":"INDUSTRY"},{"name":"CUSTOMER_KEY"}]},{"name":"CAMPAIGNS","dimensions":[{"name":"DATE"},{"name":"CAMPAIGN_FACT_ID"},{"name":"CAMPAIGN_KEY"},{"name":"CAMPAIGN_MONTH"},{"name":"CAMPAIGN_YEAR"},{"name":"CHANNEL_KEY"},{"name":"PRODUCT_KEY"},{"name":"REGION_KEY"}],"facts":[{"name":"CAMPAIGN_RECORD"},{"name":"SPEND"},{"name":"IMPRESSIONS"},{"name":"LEADS_GENERATED"}],"metrics":[{"name":"AVERAGE_SPEND"},{"name":"TOTAL_CAMPAIGNS"},{"name":"TOTAL_IMPRESSIONS"},{"name":"TOTAL_LEADS"},{"name":"TOTAL_SPEND"}]},{"name":"CAMPAIGN_DETAILS","dimensions":[{"name":"CAMPAIGN_KEY"},{"name":"CAMPAIGN_NAME"},{"name":"CAMPAIGN_OBJECTIVE"}]},{"name":"CHANNELS","dimensions":[{"name":"CHANNEL_KEY"},{"name":"CHANNEL_NAME"}]},{"name":"CONTACTS","dimensions":[{"name":"ACCOUNT_ID"},{"name":"CAMPAIGN_NO"},{"name":"CONTACT_ID"},{"name":"DEPARTMENT"},{"name":"EMAIL"},{"name":"FIRST_NAME"},{"name":"LAST_NAME"},{"name":"LEAD_SOURCE"},{"name":"OPPORTUNITY_ID"},{"name":"TITLE"}],"facts":[{"name":"CONTACT_RECORD"}],"metrics":[{"name":"TOTAL_CONTACTS"}]},{"name":"CONTACTS_FOR_OPPORTUNITIES"},{"name":"OPPORTUNITIES","dimensions":[{"name":"ACCOUNT_ID"},{"name":"CAMPAIGN_ID"},{"name":"CLOSE_DATE"},{"name":"OPPORTUNITY_ID"},{"name":"OPPORTUNITY_LEAD_SOURCE"},{"name":"OPPORTUNITY_NAME"},{"name":"OPPORTUNITY_STAGE","sample_values":["Closed Won","Perception Analysis","Qualification"]},{"name":"OPPORTUNITY_TYPE"},{"name":"SALE_ID"}],"facts":[{"name":"OPPORTUNITY_RECORD"},{"name":"AMOUNT"}],"metrics":[{"name":"AVERAGE_DEAL_SIZE"},{"name":"CLOSED_WON_REVENUE"},{"name":"TOTAL_OPPORTUNITIES"},{"name":"TOTAL_REVENUE"}]},{"name":"PRODUCTS","dimensions":[{"name":"CATEGORY_NAME"},{"name":"PRODUCT_KEY"},{"name":"PRODUCT_NAME"},{"name":"VERTICAL"}]},{"name":"REGIONS","dimensions":[{"name":"REGION_KEY"},{"name":"REGION_NAME"}]}],"relationships":[{"name":"CAMPAIGNS_TO_CHANNELS","relationship_type":"many_to_one"},{"name":"CAMPAIGNS_TO_DETAILS","relationship_type":"many_to_one"},{"name":"CAMPAIGNS_TO_PRODUCTS","relationship_type":"many_to_one"},{"name":"CAMPAIGNS_TO_REGIONS","relationship_type":"many_to_one"},{"name":"CONTACTS_TO_ACCOUNTS","relationship_type":"many_to_one"},{"name":"CONTACTS_TO_CAMPAIGNS","relationship_type":"many_to_one"},{"name":"CONTACTS_TO_OPPORTUNITIES","relationship_type":"many_to_one"},{"name":"OPPORTUNITIES_TO_ACCOUNTS","relationship_type":"many_to_one"},{"name":"OPPORTUNITIES_TO_CAMPAIGNS"}],"verified_queries":[{"name":"activated users","question":"show activated users","sql":"WITH campaign_impressions AS (\\n  SELECT\\n    c.campaign_key,\\n    cd.campaign_name,\\n    SUM(c.impressions) AS total_impressions\\n  FROM\\n    campaigns AS c\\n    LEFT OUTER JOIN campaign_details AS cd ON c.campaign_key = cd.campaign_key\\n  WHERE\\n    YEAR(c.date) = 2025\\n  GROUP BY\\n    c.campaign_key,\\n    cd.campaign_name\\n),\\ncampaign_opportunities AS (\\n  SELECT\\n    c.campaign_key,\\n    COUNT(o.opportunity_record) AS total_opportunities,\\n    COUNT(\\n      CASE\\n        WHEN o.stage_name = ''Closed Won'' THEN o.opportunity_record\\n      END\\n    ) AS closed_won_opportunities\\n  FROM\\n    campaigns AS c\\n    LEFT OUTER JOIN opportunities AS o ON c.campaign_fact_id = o.campaign_id\\n  WHERE\\n    YEAR(c.date) = 2025\\n  GROUP BY\\n    c.campaign_key\\n)\\nSELECT\\n  ci.campaign_name,\\n  ci.total_impressions,\\n  COALESCE(co.total_opportunities, 0) AS total_opportunities,\\n  COALESCE(co.closed_won_opportunities, 0) AS closed_won_opportunities\\nFROM\\n  campaign_impressions AS ci\\n  LEFT JOIN campaign_opportunities AS co ON ci.campaign_key = co.campaign_key\\nORDER BY\\n  ci.total_impressions DESC NULLS LAST","use_as_onboarding_question":false,"verified_by":"DAVE Demo","verified_at":1728401234}]}');
 
 
 
