@@ -2,6 +2,8 @@
 
 A complete Snowflake Intelligence demonstration customized for **DAVE Operating Co**, showcasing AI-powered product analytics for a B2C fintech company.
 
+**🚀 Quick Start**: Run `sql_scripts/demo_setup.sql` → Access agent at **https://ai.snowflake.com** → Ask the [5 demo questions](#-5-minute-demo-script-multi-tool-showcase) below!
+
 ## 🎯 Overview
 
 This demo is specifically designed for **DAVE's Product and Executive Teams** to demonstrate how Snowflake Intelligence enables natural language analytics across:
@@ -9,6 +11,8 @@ This demo is specifically designed for **DAVE's Product and Executive Teams** to
 - **Transaction Analytics** - ExtraCash advances, fees, tips, subscriptions
 - **User Acquisition** - Campaign performance, CAC, conversion funnels
 - **Team Performance** - Organizational metrics and staffing
+- **Competitive Intelligence** - Web scraping and external data analysis
+- **Document Search** - Policy and documentation retrieval
 
 ## ⚡ Quick Start
 
@@ -22,9 +26,61 @@ This demo is specifically designed for **DAVE's Product and Executive Teams** to
 
 ### Access the Agent
 
-1. Click **"AI & ML"** → **"Intelligence"** in Snowsight
+1. Open **https://ai.snowflake.com** (or click **"AI & ML"** → **"Intelligence"** in Snowsight)
 2. Select **"DAVE Product Analytics Agent"**
-3. Start asking questions in natural language!
+3. Follow the 5-question demo script below!
+
+---
+
+## 🎯 **5-Minute Demo Script** (Multi-Tool Showcase)
+
+Copy and paste these questions into the agent **one at a time**:
+
+### **Question 1: Product Usage** (Cortex Analyst - Product Usage Analytics)
+```
+What are the top 5 most used DAVE features by transaction volume? Show me the breakdown.
+```
+**Expected Insight**: ExtraCash products dominate (65% of transactions), with $75-$100 advances being most popular.
+
+---
+
+### **Question 2: User Acquisition & Segments** (Cortex Analyst - Multi-Domain)
+```
+Which user segments have the highest lifetime value and lowest acquisition cost? Compare Gig Workers, Young Professionals, and Students across these metrics.
+```
+**Expected Insight**: Young Professionals have highest LTV ($250-450), Gig Workers highest volume, Students lowest but engaged with budgeting.
+
+---
+
+### **Question 3: Competitive Analysis** (Web Scraping Tool)
+```
+How do our products compare against https://www.albert.com? Analyze their website and compare their feature offerings to our DAVE products.
+```
+**Expected Insight**: Agent will scrape Albert's website and compare their cash advance, budgeting, and banking features to DAVE's offerings.
+
+---
+
+### **Question 4: Policy Search** (Cortex Search - Document Search)
+```
+What does our financial policy say about expense management and vendor payments?
+```
+**Expected Insight**: Agent searches finance documents and returns relevant policy information from expense policies and vendor management docs.
+
+---
+
+### **Question 5: Email Summary** (Email Tool)
+```
+Send me an email summary of this chat to [your.email@company.com]
+```
+**Expected Insight**: Agent compiles the conversation and sends an HTML-formatted email summary of all insights discussed.
+
+---
+
+**Demo Time**: ~5 minutes | **Tools Used**: All 4 tool types (Cortex Analyst, Cortex Search, Web Scraping, Email)
+
+**Agent URL**: https://ai.snowflake.com
+
+---
 
 ## 💡 What Insights the Data Reveals
 
@@ -60,148 +116,51 @@ The sample data has been crafted to reveal **compelling, realistic insights** th
 - Premium users tip more
 - Validates user satisfaction
 
-## 🎬 Demo Script - Sample Questions
+## 📚 Additional Sample Questions
 
-### 1. Product Usage Analytics (5 minutes)
+**See the [5-Minute Demo Script](#-5-minute-demo-script-multi-tool-showcase) above for the recommended demo flow.**
 
-**Opening Question:**
+Below are additional questions you can explore:
+
+### Product Usage:
 ```
-What are the top 5 most used DAVE features by transaction volume?
-```
-
-**Follow-up Questions:**
-```
-Show me ExtraCash transaction trends by month for 2024 with a visualization
-
+Show me ExtraCash transaction trends by month for 2024
 How many users are using both ExtraCash and Budgeting tools?
-
-What's the adoption rate for Credit Builder compared to other products?
-
-Which features have the highest user engagement by user segment?
+What's the adoption rate for Credit Builder?
+Which features have declining usage trends?
 ```
 
-**Key Insights to Highlight:**
-- ExtraCash is the most popular product
-- Gig Workers and Young Professionals are power users
-- Cross-feature usage indicates product stickiness
-- Visualizations show clear trends
-
----
-
-### 2. Transaction & Revenue Analytics (5 minutes)
-
-**Opening Question:**
+### User & Revenue Analytics:
 ```
-What is our average revenue per user (ARPU) by product line?
-```
-
-**Follow-up Questions:**
-```
-Show me monthly revenue trends by product category for 2024
-
-What's the average ExtraCash advance amount by user segment?
-
-Compare revenue from ExtraCash, Subscriptions, and Tips
-
-What percentage of users pay tips, and what's the average tip amount?
-```
-
-**Key Insights to Highlight:**
-- ExtraCash drives majority of revenue
-- Average advance amount is $75-$150
-- Subscriptions provide recurring revenue
-- Tips show user satisfaction
-
----
-
-### 3. User Acquisition & Growth (5 minutes)
-
-**Opening Question:**
-```
-What's our user acquisition cost (CAC) by marketing channel?
-```
-
-**Follow-up Questions:**
-```
-Which marketing campaigns have the best conversion rates from signup to activated user?
-
-Show me monthly user signups by acquisition channel for 2024
-
-What's our user activation rate from signup to first transaction?
-
-Compare user lifetime value (LTV) by acquisition channel
-```
-
-**Key Insights to Highlight:**
-- Referral program has lowest CAC
-- Social media drives high volume
-- Conversion rates vary significantly by channel
-- LTV:CAC ratio shows profitable channels
-
----
-
-### 4. User Behavior & Retention (5 minutes)
-
-**Opening Question:**
-```
+What is our average revenue per user (ARPU) by segment?
+Show me monthly revenue trends by product line
+What percentage of users pay tips?
 Which user segments have the highest transaction frequency?
 ```
 
-**Follow-up Questions:**
+### Growth & Marketing:
 ```
-What's the average time between transactions for active users?
-
-How many users who took an ExtraCash advance in Q1 2024 are still active?
-
-Which features correlate with higher user retention?
-
-Show me user churn indicators by segment
+Which campaigns have the best conversion rates?
+Show me user signups by channel over time
+What's our overall user activation rate?
+Compare LTV to CAC ratio by channel
 ```
 
-**Key Insights to Highlight:**
-- Gig Workers have highest transaction frequency
-- Multi-feature users have better retention
-- Budgeting tool usage reduces churn
-- Different segments have different behaviors
-
----
-
-### 5. Cross-Functional Analysis (5 minutes)
-
-**Advanced Questions:**
+### Retention & Behavior:
 ```
-Calculate LTV to CAC ratio by user segment and acquisition channel
-
-Show me the complete funnel from campaign impression to revenue generated
-
-Which user segments are most profitable when considering acquisition cost?
-
-What's the ROI of our top 5 marketing campaigns including closed revenue?
+Which segments have the highest churn rate?
+What's our retention rate at 30, 60, and 90 days?
+Do multi-product users have better retention?
+Show me transaction patterns by day of week
 ```
 
-**Key Insights to Highlight:**
-- End-to-end visibility from marketing to revenue
-- Data-driven decision making
-- Cross-functional insights
-- Immediate answers to complex questions
-
----
-
-### 6. Document Search & Policy Questions (3 minutes)
-
-**Demo Document Search:**
+### Cross-Functional:
 ```
-What is our expense policy for vendor payments?
-
-Search our marketing strategy documents for user acquisition tactics
-
-What are the key features mentioned in our product documentation?
+Calculate ROI of our top 5 campaigns
+Which user segments are most profitable?
+Show me the complete funnel from signup to revenue
+What's the payback period by acquisition channel?
 ```
-
-**Key Insights to Highlight:**
-- Combines structured data with unstructured documents
-- Retrieves relevant policies and documentation
-- Provides context for data insights
 
 ---
 
@@ -413,109 +372,21 @@ SELECT 'Signups', COUNT(*) FROM sf_contacts;
 SHOW AGENTS IN SCHEMA SNOWFLAKE_INTELLIGENCE.AGENTS;
 ```
 
-## 🎯 Sample Questions Library
+## 💬 More Questions to Try
 
-### Product Usage Questions:
+Explore these additional questions after the 5-minute demo:
+
 ```
-What are the top 5 most used DAVE features?
-
-Show me ExtraCash transaction volumes by month for 2024
-
-How many users are using both ExtraCash and Budgeting tools?
-
-What's the adoption rate for Credit Builder vs Banking?
-
-Which features have declining usage trends?
-
-What's the average transaction size for each ExtraCash product tier?
-```
-
-### User Analytics Questions:
-```
+Show me ExtraCash transaction trends by month for 2024
+Compare revenue from ExtraCash vs Subscriptions vs Tips
 Which user segments have the highest engagement?
-
-Show me user engagement trends over the last 6 months
-
-How many active users do we have each month?
-
-What percentage of users become repeat ExtraCash users?
-
-Which user segments use multiple DAVE products?
-
-What's the distribution of users across segments?
-```
-
-### Financial Questions:
-```
-What is our average revenue per user (ARPU) by product?
-
-Show me monthly revenue trends by product line
-
-What's the revenue split between ExtraCash, Subscriptions, and Tips?
-
-What are our top expense categories?
-
-Calculate ARPU by user segment
-
-What's the average tip amount and how many users tip?
-```
-
-### Growth & Marketing Questions:
-```
-What's our user acquisition cost (CAC) by channel?
-
-Which marketing campaigns have the best conversion rates?
-
-Show me monthly user signups by acquisition channel
-
 What's our user activation rate from signup to first transaction?
-
-Which channels have the lowest CAC?
-
-Compare LTV to CAC ratio by acquisition channel
-
-What's the conversion funnel from signup to activated user?
-
-Which campaigns drove the most revenue?
-```
-
-### Retention & Churn Questions:
-```
-Which user segments have the highest churn rate?
-
-What's our user retention rate at 30, 60, and 90 days?
-
-How many users who got ExtraCash in Q1 are still active?
-
-What features correlate with higher retention?
-
-What's the average time between transactions for active users?
-
+How many users are using both ExtraCash and Budgeting tools?
+Which campaigns have the best conversion rates?
+What's the average tip amount and how many users tip?
+Show me transaction patterns by day of week
 Which user cohorts have the best retention?
-```
-
-### Cross-Functional Questions:
-```
-Calculate LTV to CAC ratio by user segment and channel
-
-Show me the complete funnel from campaign to revenue
-
-Which user segments are most profitable?
-
-What's the payback period by acquisition channel?
-
-How does product usage affect lifetime value?
-```
-
-### Document Search Questions:
-```
-What is our expense policy for vendor payments?
-
 Search our marketing strategy for user acquisition tactics
-
-What does our financial report say about Q4 performance?
-
-Find information about performance review guidelines
 ```
 
 ## 🏢 What Makes This DAVE-Specific
@@ -629,51 +500,17 @@ Before running the script:
 - ✅ **GitHub repository is public** (https://github.com/sfc-gh-jleati/Snowflake_AI_DEMO)
 - ✅ **Files committed to GitHub** (demo_data/*.csv and unstructured_docs/*.pdf)
 
-## 🎬 Demo Flow Recommendations
+## 🎯 Key Value Propositions
 
-### 15-Minute Product Team Demo:
-1. **Feature Adoption** (5 min) - "What are top features?" → "Show ExtraCash trends"
-2. **User Behavior** (5 min) - "Which segments engage most?" → "Show cross-usage"
-3. **Product Performance** (5 min) - "What's ARPU by product?" → "Revenue drivers"
+**For Product Teams:**
+- ✅ Self-service analytics (no SQL required)
+- ✅ Instant feature adoption insights
+- ✅ Multi-tool capabilities (data + docs + web scraping + email)
 
-### 15-Minute Executive Demo:
-1. **Growth Metrics** (5 min) - "User growth trends?" → "CAC by channel"
-2. **Financial Performance** (5 min) - "Revenue by product" → "ARPU trends"
-3. **Strategic Insights** (5 min) - "Most profitable segments?" → "LTV:CAC ratio"
-
-### 30-Minute Comprehensive Demo:
-1. **Product Analytics** (7 min) - Usage patterns, adoption, engagement
-2. **User Analytics** (7 min) - Segments, behavior, retention
-3. **Growth Analytics** (7 min) - Campaigns, CAC, conversion funnels
-4. **Financial Analytics** (5 min) - Revenue, ARPU, profitability
-5. **Cross-Functional** (4 min) - End-to-end insights, LTV:CAC, ROI
-
-## 🔍 Key Features to Highlight
-
-### 1. Natural Language Interface
-- No SQL required
-- Ask questions conversationally
-- Instant answers with visualizations
-
-### 2. Cross-Functional Data
-- Product + Finance + Marketing + Operations
-- One source of truth
-- Connected insights
-
-### 3. Self-Service Analytics
-- Product managers get insights independently
-- No waiting for data team
-- Explore data dynamically
-
-### 4. Visualizations Included
-- Auto-generated charts
-- Trends, comparisons, distributions
-- Executive-ready outputs
-
-### 5. Document Integration
-- Search policies and documentation
-- Combine structured and unstructured data
-- Context-aware answers
+**For Executives:**
+- ✅ Strategic metrics at fingertips (ARPU, CAC, LTV, ROI)
+- ✅ Cross-functional visibility
+- ✅ Data-driven decision making in seconds
 
 ## 🚨 Troubleshooting
 
