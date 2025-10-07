@@ -771,7 +771,7 @@ CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.MARKETING_SE
 		PUBLIC OPPORTUNITIES.TOTAL_REVENUE as SUM(OPPORTUNITIES.amount) comment='Total revenue from campaign-acquired users'
 	)
 	comment='Semantic view for DAVE user acquisition & retention analytics - tracks campaign performance, user signups, activations, and conversion to revenue'
-	with extension (CA='{"tables":[{"name":"ACCOUNTS","dimensions":[{"name":"ACCOUNT_ID"},{"name":"ACCOUNT_NAME"},{"name":"ACCOUNT_TYPE"},{"name":"ANNUAL_REVENUE"},{"name":"EMPLOYEES"},{"name":"INDUSTRY"},{"name":"ACQUISITION_CHANNEL"},{"name":"CUSTOMER_KEY"}]},{"name":"CAMPAIGNS","dimensions":[{"name":"DATE"},{"name":"CAMPAIGN_FACT_ID"},{"name":"CAMPAIGN_KEY"},{"name":"CAMPAIGN_MONTH"},{"name":"CAMPAIGN_YEAR"},{"name":"CHANNEL_KEY"},{"name":"PRODUCT_KEY"},{"name":"REGION_KEY"}],"facts":[{"name":"CAMPAIGN_RECORD"},{"name":"SPEND"},{"name":"IMPRESSIONS"},{"name":"LEADS_GENERATED"}],"metrics":[{"name":"AVERAGE_SPEND"},{"name":"TOTAL_CAMPAIGNS"},{"name":"TOTAL_IMPRESSIONS"},{"name":"TOTAL_LEADS"},{"name":"TOTAL_SPEND"}]},{"name":"CAMPAIGN_DETAILS","dimensions":[{"name":"CAMPAIGN_KEY"},{"name":"CAMPAIGN_NAME"},{"name":"CAMPAIGN_OBJECTIVE"}]},{"name":"CHANNELS","dimensions":[{"name":"CHANNEL_KEY"},{"name":"CHANNEL_NAME"}]},{"name":"CONTACTS","dimensions":[{"name":"ACCOUNT_ID"},{"name":"CAMPAIGN_NO"},{"name":"CONTACT_ID"},{"name":"DEPARTMENT"},{"name":"EMAIL"},{"name":"FIRST_NAME"},{"name":"LAST_NAME"},{"name":"LEAD_SOURCE"},{"name":"OPPORTUNITY_ID"},{"name":"TITLE"}],"facts":[{"name":"CONTACT_RECORD"}],"metrics":[{"name":"TOTAL_CONTACTS"}]},{"name":"CONTACTS_FOR_OPPORTUNITIES"},{"name":"OPPORTUNITIES","dimensions":[{"name":"ACCOUNT_ID"},{"name":"CAMPAIGN_ID"},{"name":"CLOSE_DATE"},{"name":"OPPORTUNITY_ID"},{"name":"OPPORTUNITY_LEAD_SOURCE"},{"name":"OPPORTUNITY_NAME"},{"name":"OPPORTUNITY_STAGE","sample_values":["Closed Won","Perception Analysis","Qualification"]},{"name":"OPPORTUNITY_TYPE"},{"name":"SALE_ID"}],"facts":[{"name":"OPPORTUNITY_RECORD"},{"name":"AMOUNT"}],"metrics":[{"name":"AVERAGE_DEAL_SIZE"},{"name":"CLOSED_WON_REVENUE"},{"name":"TOTAL_OPPORTUNITIES"},{"name":"TOTAL_REVENUE"}]},{"name":"PRODUCTS","dimensions":[{"name":"CATEGORY_NAME"},{"name":"PRODUCT_KEY"},{"name":"PRODUCT_NAME"},{"name":"VERTICAL"}]},{"name":"REGIONS","dimensions":[{"name":"REGION_KEY"},{"name":"REGION_NAME"}]}],"relationships":[{"name":"CAMPAIGNS_TO_CHANNELS","relationship_type":"many_to_one"},{"name":"CAMPAIGNS_TO_DETAILS","relationship_type":"many_to_one"},{"name":"CAMPAIGNS_TO_PRODUCTS","relationship_type":"many_to_one"},{"name":"CAMPAIGNS_TO_REGIONS","relationship_type":"many_to_one"},{"name":"CONTACTS_TO_ACCOUNTS","relationship_type":"many_to_one"},{"name":"CONTACTS_TO_CAMPAIGNS","relationship_type":"many_to_one"},{"name":"CONTACTS_TO_OPPORTUNITIES","relationship_type":"many_to_one"},{"name":"OPPORTUNITIES_TO_ACCOUNTS","relationship_type":"many_to_one"},{"name":"OPPORTUNITIES_TO_CAMPAIGNS"}],"custom_instructions":"User Attribution Model:\\n\\nEach user has ACQUISITION_CHANNEL showing which channel they came from.\\n\\nFor LTV by segment: Query ACCOUNTS table, AVG(annual_revenue) grouped by industry.\\n\\nFor CAC by segment: \\n1. Count users per segment from ACCOUNTS\\n2. Get channel costs from CAMPAIGNS (spend/leads) by channel_name\\n3. Join on acquisition_channel = channel_name\\n4. Weight CAC by user distribution\\n\\nKeep queries simple - avoid complex CTEs that cause compilation errors.","verified_queries":[{"name":"LTV by segment simple","question":"show me lifetime value by user segment","sql":"SELECT industry, AVG(annual_revenue) as avg_ltv, COUNT(*) as users FROM accounts WHERE industry IN (''Gig Worker'',''Young Professional'',''Student'') GROUP BY industry ORDER BY avg_ltv DESC","use_as_onboarding_question":true,"verified_by":"DAVE","verified_at":1728401234},{"name":"CAC by channel simple","question":"show me acquisition cost by channel","sql":"SELECT ch.channel_name, SUM(c.spend)/NULLIF(SUM(c.leads_generated),0) as cac FROM campaigns c JOIN channels ch ON c.channel_key=ch.channel_key WHERE YEAR(c.date)=2025 GROUP BY ch.channel_name ORDER BY cac","use_as_onboarding_question":false,"verified_by":"DAVE","verified_at":1728401234}]}');
+	with extension (CA='{"tables":[{"name":"ACCOUNTS","dimensions":[{"name":"ACCOUNT_ID"},{"name":"ACCOUNT_NAME"},{"name":"ACCOUNT_TYPE"},{"name":"ANNUAL_REVENUE"},{"name":"EMPLOYEES"},{"name":"INDUSTRY"},{"name":"ACQUISITION_CHANNEL"},{"name":"CUSTOMER_KEY"}]},{"name":"CAMPAIGNS","dimensions":[{"name":"DATE"},{"name":"CAMPAIGN_FACT_ID"},{"name":"CAMPAIGN_KEY"},{"name":"CAMPAIGN_MONTH"},{"name":"CAMPAIGN_YEAR"},{"name":"CHANNEL_KEY"},{"name":"PRODUCT_KEY"},{"name":"REGION_KEY"}],"facts":[{"name":"CAMPAIGN_RECORD"},{"name":"SPEND"},{"name":"IMPRESSIONS"},{"name":"LEADS_GENERATED"}],"metrics":[{"name":"AVERAGE_SPEND"},{"name":"TOTAL_CAMPAIGNS"},{"name":"TOTAL_IMPRESSIONS"},{"name":"TOTAL_LEADS"},{"name":"TOTAL_SPEND"}]},{"name":"CAMPAIGN_DETAILS","dimensions":[{"name":"CAMPAIGN_KEY"},{"name":"CAMPAIGN_NAME"},{"name":"CAMPAIGN_OBJECTIVE"}]},{"name":"CHANNELS","dimensions":[{"name":"CHANNEL_KEY"},{"name":"CHANNEL_NAME"}]},{"name":"CONTACTS","dimensions":[{"name":"ACCOUNT_ID"},{"name":"CAMPAIGN_NO"},{"name":"CONTACT_ID"},{"name":"DEPARTMENT"},{"name":"EMAIL"},{"name":"FIRST_NAME"},{"name":"LAST_NAME"},{"name":"LEAD_SOURCE"},{"name":"OPPORTUNITY_ID"},{"name":"TITLE"}],"facts":[{"name":"CONTACT_RECORD"}],"metrics":[{"name":"TOTAL_CONTACTS"}]},{"name":"CONTACTS_FOR_OPPORTUNITIES"},{"name":"OPPORTUNITIES","dimensions":[{"name":"ACCOUNT_ID"},{"name":"CAMPAIGN_ID"},{"name":"CLOSE_DATE"},{"name":"OPPORTUNITY_ID"},{"name":"OPPORTUNITY_LEAD_SOURCE"},{"name":"OPPORTUNITY_NAME"},{"name":"OPPORTUNITY_STAGE","sample_values":["Closed Won","Perception Analysis","Qualification"]},{"name":"OPPORTUNITY_TYPE"},{"name":"SALE_ID"}],"facts":[{"name":"OPPORTUNITY_RECORD"},{"name":"AMOUNT"}],"metrics":[{"name":"AVERAGE_DEAL_SIZE"},{"name":"CLOSED_WON_REVENUE"},{"name":"TOTAL_OPPORTUNITIES"},{"name":"TOTAL_REVENUE"}]},{"name":"PRODUCTS","dimensions":[{"name":"CATEGORY_NAME"},{"name":"PRODUCT_KEY"},{"name":"PRODUCT_NAME"},{"name":"VERTICAL"}]},{"name":"REGIONS","dimensions":[{"name":"REGION_KEY"},{"name":"REGION_NAME"}]}],"relationships":[{"name":"CAMPAIGNS_TO_CHANNELS","relationship_type":"many_to_one"},{"name":"CAMPAIGNS_TO_DETAILS","relationship_type":"many_to_one"},{"name":"CAMPAIGNS_TO_PRODUCTS","relationship_type":"many_to_one"},{"name":"CAMPAIGNS_TO_REGIONS","relationship_type":"many_to_one"},{"name":"CONTACTS_TO_ACCOUNTS","relationship_type":"many_to_one"},{"name":"CONTACTS_TO_CAMPAIGNS","relationship_type":"many_to_one"},{"name":"CONTACTS_TO_OPPORTUNITIES","relationship_type":"many_to_one"},{"name":"OPPORTUNITIES_TO_ACCOUNTS","relationship_type":"many_to_one"},{"name":"OPPORTUNITIES_TO_CAMPAIGNS"}],"custom_instructions":"IMPORTANT: There is a helper view called segment_metrics_view in DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS that pre-calculates LTV and CAC by user segment.\\n\\nFor questions about LTV and CAC by segment, use:\\nSELECT * FROM DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.segment_metrics_view WHERE user_segment IN ('desired segments')\\n\\nThis view contains:\\n- user_segment (Gig Worker, Young Professional, Student, etc.)\\n- avg_lifetime_value (average LTV)\\n- total_users (count of users)\\n- weighted_avg_cac (CAC weighted by channel mix)\\n- ltv_to_cac_ratio\\n\\nFor simple LTV only: Query accounts table directly.\\nFor simple CAC by channel: Query campaigns + channels.","verified_queries":[{"name":"LTV and CAC by segment using helper view","question":"which user segments have the highest lifetime value and lowest acquisition cost","sql":"SELECT user_segment, avg_lifetime_value, total_users, weighted_avg_cac, ltv_to_cac_ratio FROM DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.segment_metrics_view WHERE user_segment IN (''Gig Worker'',''Young Professional'',''Student'') ORDER BY avg_lifetime_value DESC","use_as_onboarding_question":true,"verified_by":"DAVE","verified_at":1728401234},{"name":"LTV by segment","question":"show me lifetime value by user segment","sql":"SELECT industry, AVG(annual_revenue) as avg_ltv, COUNT(*) as users FROM accounts WHERE industry IN (''Gig Worker'',''Young Professional'',''Student'') GROUP BY industry ORDER BY avg_ltv DESC","use_as_onboarding_question":false,"verified_by":"DAVE","verified_at":1728401234}]}');
 
 
 
@@ -841,6 +841,43 @@ CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS.HR_SEMANTIC_
   SHOW SEMANTIC METRICS; 
 
 
+    -- ========================================================================
+    -- HELPER VIEWS FOR COMMON ANALYTICS
+    -- Pre-calculated views to avoid complex joins and improve agent performance
+    -- ========================================================================
+
+    -- User Segment Metrics View - Pre-calculates LTV and CAC by segment
+    CREATE OR REPLACE VIEW segment_metrics_view AS
+    WITH channel_cac AS (
+        SELECT 
+            ch.channel_name,
+            SUM(c.spend) / NULLIF(SUM(c.leads_generated), 0) as cac_per_user
+        FROM marketing_campaign_fact c
+        JOIN channel_dim ch ON c.channel_key = ch.channel_key
+        WHERE YEAR(c.date) = 2025
+        GROUP BY ch.channel_name
+    ),
+    segment_channel_distribution AS (
+        SELECT 
+            a.industry,
+            a.acquisition_channel,
+            COUNT(*) as user_count,
+            AVG(a.annual_revenue) as avg_ltv_this_channel
+        FROM sf_accounts a
+        GROUP BY a.industry, a.acquisition_channel
+    )
+    SELECT 
+        scd.industry as user_segment,
+        AVG(scd.avg_ltv_this_channel) as avg_lifetime_value,
+        SUM(scd.user_count) as total_users,
+        SUM(scd.user_count * COALESCE(cc.cac_per_user, 0)) / NULLIF(SUM(scd.user_count), 0) as weighted_avg_cac,
+        AVG(scd.avg_ltv_this_channel) / NULLIF(SUM(scd.user_count * COALESCE(cc.cac_per_user, 0)) / NULLIF(SUM(scd.user_count), 0), 0) as ltv_to_cac_ratio
+    FROM segment_channel_distribution scd
+    LEFT JOIN channel_cac cc ON scd.acquisition_channel = cc.channel_name
+    GROUP BY scd.industry;
+
+    -- Verify the helper view works
+    SELECT * FROM segment_metrics_view WHERE user_segment IN ('Gig Worker', 'Young Professional', 'Student') ORDER BY avg_lifetime_value DESC;
 
 
 
