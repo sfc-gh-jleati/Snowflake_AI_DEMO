@@ -218,8 +218,8 @@ CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.PRODUCT_ANALYTICS.product_analytics
 
 CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.PRODUCT_ANALYTICS.user_acquisition_view
     tables (
-        USERS as users primary key (USER_ID) comment='DAVE app users with LTV and acquisition channel',
-        CAMPAIGNS as campaigns primary key (CAMPAIGN_ID) comment='Marketing campaigns with spend and leads'
+        USERS as users primary key (USER_ID) comment='DAVE app users with LTV and acquisition channel. Query this table for LTV by user_segment.',
+        CAMPAIGNS as campaigns primary key (CAMPAIGN_ID) comment='Marketing campaigns with spend and leads. Query this table for CAC by channel. Note: USERS and CAMPAIGNS are independent tables - query them separately for LTV and CAC questions.'
     )
     facts (
         CAMPAIGNS.SPEND as spend comment='Campaign spend',
@@ -245,7 +245,7 @@ CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.PRODUCT_ANALYTICS.user_acquisition_
         CAMPAIGNS.CAC as SUM(campaigns.spend) / SUM(campaigns.leads_generated) comment='Customer acquisition cost (cost per user acquired)'
     )
     comment='User acquisition analytics - LTV by segment, CAC by channel'
-    with extension (CA='{"tables":[{"name":"USERS","dimensions":[{"name":"USER_SEGMENT","sample_values":["Gig Worker","Young Professional","Student"]},{"name":"ACQUISITION_CHANNEL","sample_values":["Instagram Ads","Referral Program","TikTok Ads"]},{"name":"LIFETIME_VALUE"},{"name":"ACCOUNT_TIER","sample_values":["Free","Basic","Premium","Premium Plus"]},{"name":"SIGNUP_DATE"},{"name":"REGION","sample_values":["South","West","East","North"]}],"facts":[{"name":"LIFETIME_VALUE"}],"metrics":[{"name":"AVERAGE_LTV"}]},{"name":"CAMPAIGNS","dimensions":[{"name":"CHANNEL","sample_values":["Instagram Ads","Referral Program","TikTok Ads","Paid Search (Google)","Organic Search"]},{"name":"CAMPAIGN_NAME"},{"name":"CAMPAIGN_DATE"}],"facts":[{"name":"SPEND"},{"name":"LEADS_GENERATED"},{"name":"IMPRESSIONS"},{"name":"CAMP_COUNT"}],"metrics":[{"name":"TOTAL_SPEND"},{"name":"TOTAL_LEADS"},{"name":"CAC"}]}]}');
+    with extension (CA='{"tables":[{"name":"USERS","dimensions":[{"name":"USER_SEGMENT","sample_values":["Gig Worker","Young Professional","Student"]},{"name":"ACQUISITION_CHANNEL","sample_values":["Instagram Ads","Referral Program","TikTok Ads"]},{"name":"LIFETIME_VALUE"},{"name":"ACCOUNT_TIER","sample_values":["Free","Basic","Premium","Premium Plus"]},{"name":"SIGNUP_DATE"},{"name":"REGION","sample_values":["South","West","East","North"]}],"facts":[{"name":"LIFETIME_VALUE"}],"metrics":[{"name":"AVERAGE_LTV"}]},{"name":"CAMPAIGNS","dimensions":[{"name":"CHANNEL","sample_values":["Instagram Ads","Referral Program","TikTok Ads","Paid Search (Google)","Organic Search"]},{"name":"CAMPAIGN_NAME"},{"name":"CAMPAIGN_DATE"}],"facts":[{"name":"SPEND"},{"name":"LEADS_GENERATED"},{"name":"IMPRESSIONS"},{"name":"CAMP_COUNT"}],"metrics":[{"name":"TOTAL_SPEND"},{"name":"TOTAL_LEADS"},{"name":"CAC"}]}],"custom_instructions":"For questions about LTV by user segment: Query USERS table only, GROUP BY user_segment. For questions about CAC by channel: Query CAMPAIGNS table only, GROUP BY channel. These are separate tables with no join relationship - query them independently."}');
 
 -- ========================================================================
 -- SEMANTIC VIEW 3: APP & WEB EVENTS
