@@ -18,11 +18,15 @@ AI-powered product analytics for DAVE's product and executive teams. Ask questio
 6. Wait 3-5 minutes while it creates everything
 
 **What gets created:**
-- Database: `DAVE_AI_DEMO`
-- 17 tables with 244K+ records of DAVE-specific sample data
-- 4 semantic views for natural language queries
-- 4 document search services
-- 1 AI agent: **DAVE Product Analytics Agent**
+- Database: `DAVE_AI_DEMO.PRODUCT_ANALYTICS`  
+- **4 clean tables** with ~1,300 records (fast!)
+  - users (100) - App users with segment, acquisition channel, LTV
+  - products (100) - DAVE features
+  - transactions (913) - Product usage events
+  - campaigns (214) - Marketing with channel costs
+- **2 semantic views** for natural language queries
+- **1 document search service** for policies
+- **1 AI agent**: DAVE Product Analytics Agent
 
 ### Step 2: Access the Agent
 
@@ -190,18 +194,18 @@ When you run the setup script, it creates:
 **Database & Schema:**
 - `DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS`
 
-**Sample Data:**
-- 1,000 DAVE app users (Gig Workers, Young Professionals, Students, etc.)
-- 100 DAVE products (ExtraCash, Banking, Budgeting, Credit Builder)
-- 14,600+ product usage transactions
-- 109,600+ financial transactions
-- 49,300+ marketing campaign activities
-- Realistic amounts: $25-$500 ExtraCash, $1-$10 tips
+**Clean B2C Architecture:**
+- 100 DAVE app users (Gig Workers 40%, Young Professionals 25%, Students 15%)
+- 100 DAVE products (ExtraCash, Banking, Budgeting, Credit Builder, Tips)
+- 913 product usage transactions (ExtraCash $75, $100, $50 dominate)
+- 214 marketing campaigns (10 channels, realistic CAC)
+- **Total: ~1,300 rows** (fast queries, instant insights!)
 
 **AI Services:**
-- 4 Semantic Views (for natural language queries)
-- 4 Document Search Services (finance, HR, marketing, sales docs)
+- 2 Semantic Views (Product Analytics, User Acquisition)
+- 1 Document Search Service (all policies)
 - 1 AI Agent with multi-tool capabilities
+- Web scraping & email functions
 
 ---
 
@@ -230,14 +234,15 @@ When you run the setup script, it creates:
 After running the script, verify everything worked:
 
 ```sql
-USE DAVE_AI_DEMO.DAVE_PRODUCT_ANALYTICS;
+USE DAVE_AI_DEMO.PRODUCT_ANALYTICS;
 
 -- Check tables loaded
-SELECT 'users' as dataset, COUNT(*) FROM customer_dim
-UNION ALL SELECT 'products', COUNT(*) FROM product_dim
-UNION ALL SELECT 'transactions', COUNT(*) FROM sales_fact;
+SELECT 'users' as dataset, COUNT(*) FROM users
+UNION ALL SELECT 'products', COUNT(*) FROM products
+UNION ALL SELECT 'transactions', COUNT(*) FROM transactions
+UNION ALL SELECT 'campaigns', COUNT(*) FROM campaigns;
 
--- Expected: 1000 users, 100 products, ~14600 transactions
+-- Expected: 100 users, 100 products, ~900 transactions, ~200 campaigns
 
 -- Check agent exists
 SHOW AGENTS IN SCHEMA SNOWFLAKE_INTELLIGENCE.AGENTS;

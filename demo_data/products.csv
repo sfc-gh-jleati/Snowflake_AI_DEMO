@@ -1,0 +1,101 @@
+product_id,product_name,product_category,price_point
+1,ExtraCash Advance $25,Cash Advance,25.00
+2,ExtraCash Advance $50,Cash Advance,50.00
+3,ExtraCash Advance $75,Cash Advance,75.00
+4,ExtraCash Advance $100,Cash Advance,100.00
+5,ExtraCash Advance $150,Cash Advance,150.00
+6,ExtraCash Advance $200,Cash Advance,200.00
+7,ExtraCash Advance $250,Cash Advance,250.00
+8,ExtraCash Advance $300,Cash Advance,300.00
+9,ExtraCash Express Fee,Fee,2.99
+10,Dave Banking Account,Banking,0.00
+11,Dave Debit Card,Banking,0.00
+12,Direct Deposit Setup,Banking,0.00
+13,Mobile Check Deposit,Banking,0.00
+14,Account Statement,Banking,0.00
+15,Budgeting - Goals,Budgeting,0.00
+16,Budgeting - Side Hustle Tracker,Budgeting,0.00
+17,Budgeting - Spending Insights,Budgeting,0.00
+18,Budgeting - Bill Forecast,Budgeting,0.00
+19,Budgeting - Savings Goal,Budgeting,0.00
+20,Credit Builder Enrollment,Credit Building,0.00
+21,Credit Score Monitoring,Credit Building,0.00
+22,Credit Builder Monthly Payment,Credit Building,15.00
+23,Monthly Subscription,Subscription,4.99
+24,Premium Subscription,Subscription,9.99
+25,Tip - $1,Tip,1.00
+26,Tip - $2,Tip,2.00
+27,Tip - $3,Tip,3.00
+28,Tip - $4,Tip,4.00
+29,Tip - $5,Tip,5.00
+30,Tip - $6,Tip,6.00
+31,Tip - $7,Tip,7.00
+32,Tip - $8,Tip,8.00
+33,Tip - $10,Tip,10.00
+34,ExtraCash Advance $35,Cash Advance,35.00
+35,ExtraCash Advance $60,Cash Advance,60.00
+36,ExtraCash Advance $80,Cash Advance,80.00
+37,ExtraCash Advance $90,Cash Advance,90.00
+38,ExtraCash Advance $110,Cash Advance,110.00
+39,ExtraCash Advance $120,Cash Advance,120.00
+40,ExtraCash Advance $125,Cash Advance,125.00
+41,ExtraCash Advance $130,Cash Advance,130.00
+42,ExtraCash Advance $140,Cash Advance,140.00
+43,ExtraCash Advance $160,Cash Advance,160.00
+44,ExtraCash Advance $175,Cash Advance,175.00
+45,ExtraCash Advance $180,Cash Advance,180.00
+46,ExtraCash Advance $190,Cash Advance,190.00
+47,ExtraCash Advance $210,Cash Advance,210.00
+48,ExtraCash Advance $220,Cash Advance,220.00
+49,ExtraCash Advance $230,Cash Advance,230.00
+50,ExtraCash Advance $240,Cash Advance,240.00
+51,ExtraCash Advance $260,Cash Advance,260.00
+52,ExtraCash Advance $270,Cash Advance,270.00
+53,ExtraCash Advance $280,Cash Advance,280.00
+54,ExtraCash Advance $290,Cash Advance,290.00
+55,ExtraCash Advance $310,Cash Advance,310.00
+56,ExtraCash Advance $320,Cash Advance,320.00
+57,ExtraCash Advance $330,Cash Advance,330.00
+58,ExtraCash Advance $340,Cash Advance,340.00
+59,ExtraCash Advance $350,Cash Advance,350.00
+60,ExtraCash Advance $360,Cash Advance,360.00
+61,ExtraCash Advance $370,Cash Advance,370.00
+62,ExtraCash Advance $380,Cash Advance,380.00
+63,ExtraCash Advance $390,Cash Advance,390.00
+64,ExtraCash Advance $400,Cash Advance,400.00
+65,ExtraCash Advance $410,Cash Advance,410.00
+66,ExtraCash Advance $420,Cash Advance,420.00
+67,ExtraCash Advance $430,Cash Advance,430.00
+68,ExtraCash Advance $440,Cash Advance,440.00
+69,ExtraCash Advance $450,Cash Advance,450.00
+70,ExtraCash Advance $460,Cash Advance,460.00
+71,ExtraCash Advance $470,Cash Advance,470.00
+72,ExtraCash Advance $480,Cash Advance,480.00
+73,ExtraCash Advance $490,Cash Advance,490.00
+74,ExtraCash Advance $500,Cash Advance,500.00
+75,Banking - Transfer Out,Banking,0.00
+76,Banking - Transfer In,Banking,0.00
+77,Banking - ATM Withdrawal,Banking,0.00
+78,Overdraft Protection,Banking,0.00
+79,Instant Transfer,Banking,1.99
+80,Banking - Balance Alert,Banking,0.00
+81,Banking - Spending Alert,Banking,0.00
+82,Banking - Low Balance Warning,Banking,0.00
+83,Budgeting - Monthly Report,Budgeting,0.00
+84,Budgeting - Weekly Report,Budgeting,0.00
+85,Budgeting - Emergency Fund,Budgeting,0.00
+86,Budgeting - Debt Payoff Planner,Budgeting,0.00
+87,Budgeting - Monthly Budget,Budgeting,0.00
+88,Budgeting - Savings Tracker,Budgeting,0.00
+89,Credit Builder - Score Improvement,Credit Building,0.00
+90,Credit Builder - Auto Payment,Credit Building,0.00
+91,Credit Builder - Payment History,Credit Building,0.00
+92,Credit Builder - Credit Report,Credit Building,0.00
+93,Quarterly Subscription,Subscription,7.99
+94,Annual Subscription,Subscription,59.99
+95,Referral Bonus,Fee,5.00
+96,Late Fee Waiver,Fee,0.00
+97,Express Delivery Fee,Fee,3.99
+98,Priority Support Fee,Fee,4.99
+99,Account Upgrade Fee,Fee,9.99
+100,Service Enhancement Fee,Fee,5.99
