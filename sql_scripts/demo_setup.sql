@@ -345,9 +345,9 @@ AS $$
 import requests
 from bs4 import BeautifulSoup
 def scrape(url):
-  response = requests.get(url)
+    response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
-  return soup.get_text()
+    return soup.get_text()
 $$;
 
 -- Email function
