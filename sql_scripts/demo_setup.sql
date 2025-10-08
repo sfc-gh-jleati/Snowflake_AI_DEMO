@@ -209,7 +209,8 @@ CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.PRODUCT_ANALYTICS.product_analytics
         TRANSACTIONS.TOTAL_REVENUE as SUM(transactions.amount) comment='Total revenue',
         TRANSACTIONS.AVERAGE_AMOUNT as AVG(transactions.amount) comment='Average transaction amount'
     )
-    comment='Product usage analytics - feature adoption, revenue, user behavior';
+    comment='Product usage analytics - feature adoption, revenue, user behavior'
+    with extension (CA='{"tables":[{"name":"PRODUCTS","dimensions":[{"name":"PRODUCT_NAME","sample_values":["ExtraCash Advance $75","ExtraCash Advance $100","ExtraCash Advance $50"]},{"name":"PRODUCT_CATEGORY","sample_values":["Cash Advance","Banking","Budgeting","Tip"]},{"name":"PRICE_POINT"}]},{"name":"TRANSACTIONS","dimensions":[{"name":"TRANSACTION_DATE"},{"name":"TXN_MONTH"},{"name":"TXN_YEAR"},{"name":"REGION","sample_values":["South","West","East","North"]}],"facts":[{"name":"AMOUNT"},{"name":"TXN_COUNT"}],"metrics":[{"name":"TOTAL_TRANSACTIONS"},{"name":"TOTAL_REVENUE"},{"name":"AVERAGE_AMOUNT"}]},{"name":"USERS","dimensions":[{"name":"USER_SEGMENT","sample_values":["Gig Worker","Young Professional","Student"]},{"name":"ACCOUNT_TIER","sample_values":["Free","Basic","Premium","Premium Plus"]}]}],"relationships":[{"name":"TXN_TO_USERS","relationship_type":"many_to_one"},{"name":"TXN_TO_PRODUCTS","relationship_type":"many_to_one"}]}');
 
 -- ========================================================================
 -- SEMANTIC VIEW 2: USER ACQUISITION
@@ -227,13 +228,13 @@ CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.PRODUCT_ANALYTICS.user_acquisition_
         CAMPAIGNS.CAMP_COUNT as 1 comment='Count of campaigns'
     )
     dimensions (
-        USERS.USER_SEGMENT as user_segment comment='User segment',
-        USERS.ACQUISITION_CHANNEL as acquisition_channel comment='Channel user was acquired from',
-        USERS.LIFETIME_VALUE as lifetime_value comment='User lifetime value',
-        USERS.ACCOUNT_TIER as account_tier comment='Account tier',
+        USERS.USER_SEGMENT as user_segment with synonyms=('segment','user type') comment='User segment (Gig Worker, Young Professional, Student)',
+        USERS.ACQUISITION_CHANNEL as acquisition_channel with synonyms=('channel','signup channel') comment='Channel user was acquired from (Instagram Ads, Referral Program, TikTok Ads, etc.)',
+        USERS.LIFETIME_VALUE as lifetime_value with synonyms=('LTV','user value') comment='User lifetime value in dollars',
+        USERS.ACCOUNT_TIER as account_tier comment='Account tier (Free, Basic, Premium, Premium Plus)',
         USERS.SIGNUP_DATE as signup_date comment='User signup date',
-        USERS.REGION as region comment='User region',
-        CAMPAIGNS.CHANNEL as channel comment='Campaign channel',
+        USERS.REGION as region comment='User region (South, West, East, North)',
+        CAMPAIGNS.CHANNEL as channel with synonyms=('campaign channel','marketing channel') comment='Campaign channel (Instagram Ads, Referral Program, etc.)',
         CAMPAIGNS.CAMPAIGN_NAME as campaign_name comment='Campaign name',
         CAMPAIGNS.CAMPAIGN_DATE as campaign_date comment='Campaign date'
     )
@@ -241,9 +242,10 @@ CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.PRODUCT_ANALYTICS.user_acquisition_
         USERS.AVERAGE_LTV as AVG(users.lifetime_value) comment='Average lifetime value',
         CAMPAIGNS.TOTAL_SPEND as SUM(campaigns.spend) comment='Total campaign spend',
         CAMPAIGNS.TOTAL_LEADS as SUM(campaigns.leads_generated) comment='Total leads generated',
-        CAMPAIGNS.CAC as SUM(campaigns.spend) / SUM(campaigns.leads_generated) comment='Customer acquisition cost'
+        CAMPAIGNS.CAC as SUM(campaigns.spend) / SUM(campaigns.leads_generated) comment='Customer acquisition cost (cost per user acquired)'
     )
-    comment='User acquisition analytics - LTV by segment, CAC by channel';
+    comment='User acquisition analytics - LTV by segment, CAC by channel'
+    with extension (CA='{"tables":[{"name":"USERS","dimensions":[{"name":"USER_SEGMENT","sample_values":["Gig Worker","Young Professional","Student"]},{"name":"ACQUISITION_CHANNEL","sample_values":["Instagram Ads","Referral Program","TikTok Ads"]},{"name":"LIFETIME_VALUE"},{"name":"ACCOUNT_TIER","sample_values":["Free","Basic","Premium","Premium Plus"]},{"name":"SIGNUP_DATE"},{"name":"REGION","sample_values":["South","West","East","North"]}],"facts":[{"name":"LIFETIME_VALUE"}],"metrics":[{"name":"AVERAGE_LTV"}]},{"name":"CAMPAIGNS","dimensions":[{"name":"CHANNEL","sample_values":["Instagram Ads","Referral Program","TikTok Ads","Paid Search (Google)","Organic Search"]},{"name":"CAMPAIGN_NAME"},{"name":"CAMPAIGN_DATE"}],"facts":[{"name":"SPEND"},{"name":"LEADS_GENERATED"},{"name":"IMPRESSIONS"},{"name":"CAMP_COUNT"}],"metrics":[{"name":"TOTAL_SPEND"},{"name":"TOTAL_LEADS"},{"name":"CAC"}]}]}');
 
 -- ========================================================================
 -- SEMANTIC VIEW 3: APP & WEB EVENTS
