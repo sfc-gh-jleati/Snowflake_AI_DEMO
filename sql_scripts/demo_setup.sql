@@ -176,12 +176,12 @@ CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.PRODUCT_ANALYTICS.product_analytics
     )
     facts (
         TRANSACTIONS.AMOUNT as amount comment='Transaction amount',
-        TRANSACTIONS.TRANSACTION_RECORD as 1 comment='Count of transactions'
+        TRANSACTIONS.TXN_COUNT as 1 comment='Count of transactions'
     )
     dimensions (
         TRANSACTIONS.TRANSACTION_DATE as transaction_date comment='Date of transaction',
-        TRANSACTIONS.MONTH as MONTH(transaction_date) comment='Month',
-        TRANSACTIONS.YEAR as YEAR(transaction_date) comment='Year',
+        TRANSACTIONS.TXN_MONTH as MONTH(transaction_date) comment='Month',
+        TRANSACTIONS.TXN_YEAR as YEAR(transaction_date) comment='Year',
         TRANSACTIONS.REGION as region comment='Geographic region',
         PRODUCTS.PRODUCT_NAME as product_name comment='Product name',
         PRODUCTS.PRODUCT_CATEGORY as product_category comment='Product category',
@@ -190,7 +190,7 @@ CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.PRODUCT_ANALYTICS.product_analytics
         USERS.ACCOUNT_TIER as account_tier comment='Account tier (Free, Basic, Premium, Premium Plus)'
     )
     metrics (
-        TRANSACTIONS.TOTAL_TRANSACTIONS as COUNT(transactions.transaction_record) comment='Total transactions',
+        TRANSACTIONS.TOTAL_TRANSACTIONS as COUNT(transactions.txn_count) comment='Total transactions',
         TRANSACTIONS.TOTAL_REVENUE as SUM(transactions.amount) comment='Total revenue',
         TRANSACTIONS.AVERAGE_AMOUNT as AVG(transactions.amount) comment='Average transaction amount'
     )
@@ -209,7 +209,7 @@ CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.PRODUCT_ANALYTICS.user_acquisition_
         CAMPAIGNS.SPEND as spend comment='Campaign spend',
         CAMPAIGNS.LEADS_GENERATED as leads_generated comment='Leads generated',
         CAMPAIGNS.IMPRESSIONS as impressions comment='Ad impressions',
-        CAMPAIGNS.CAMPAIGN_RECORD as 1 comment='Count of campaigns'
+        CAMPAIGNS.CAMP_COUNT as 1 comment='Count of campaigns'
     )
     dimensions (
         USERS.USER_SEGMENT as user_segment comment='User segment',
@@ -218,7 +218,7 @@ CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.PRODUCT_ANALYTICS.user_acquisition_
         USERS.ACCOUNT_TIER as account_tier comment='Account tier',
         USERS.SIGNUP_DATE as signup_date comment='User signup date',
         USERS.REGION as region comment='User region',
-        CAMPAIGNS.CHANNEL as campaign_channel comment='Campaign channel',
+        CAMPAIGNS.CHANNEL as channel comment='Campaign channel',
         CAMPAIGNS.CAMPAIGN_NAME as campaign_name comment='Campaign name',
         CAMPAIGNS.CAMPAIGN_DATE as campaign_date comment='Campaign date'
     )
