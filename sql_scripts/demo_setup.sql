@@ -91,8 +91,8 @@ CREATE OR REPLACE STAGE INTERNAL_DATA_STAGE
 
 ALTER GIT REPOSITORY DAVE_AI_DEMO_REPO FETCH;
 
-COPY FILES INTO @INTERNAL_DATA_STAGE/demo_data_new/
-FROM @DAVE_AI_DEMO_REPO/branches/main/demo_data_new/;
+COPY FILES INTO @INTERNAL_DATA_STAGE/demo_data/
+FROM @DAVE_AI_DEMO_REPO/branches/main/demo_data/;
 
 COPY FILES INTO @INTERNAL_DATA_STAGE/unstructured_docs/
 FROM @DAVE_AI_DEMO_REPO/branches/main/unstructured_docs/;
@@ -149,10 +149,10 @@ CREATE OR REPLACE TABLE campaigns (
 -- LOAD DATA FROM GIT
 -- ========================================================================
 
-COPY INTO users FROM @INTERNAL_DATA_STAGE/demo_data_new/users.csv FILE_FORMAT = CSV_FORMAT ON_ERROR = 'CONTINUE';
-COPY INTO products FROM @INTERNAL_DATA_STAGE/demo_data_new/products.csv FILE_FORMAT = CSV_FORMAT ON_ERROR = 'CONTINUE';
-COPY INTO transactions FROM @INTERNAL_DATA_STAGE/demo_data_new/transactions.csv FILE_FORMAT = CSV_FORMAT ON_ERROR = 'CONTINUE';
-COPY INTO campaigns FROM @INTERNAL_DATA_STAGE/demo_data_new/campaigns.csv FILE_FORMAT = CSV_FORMAT ON_ERROR = 'CONTINUE';
+COPY INTO users FROM @INTERNAL_DATA_STAGE/demo_data/users.csv FILE_FORMAT = CSV_FORMAT ON_ERROR = 'CONTINUE';
+COPY INTO products FROM @INTERNAL_DATA_STAGE/demo_data/products.csv FILE_FORMAT = CSV_FORMAT ON_ERROR = 'CONTINUE';
+COPY INTO transactions FROM @INTERNAL_DATA_STAGE/demo_data/transactions.csv FILE_FORMAT = CSV_FORMAT ON_ERROR = 'CONTINUE';
+COPY INTO campaigns FROM @INTERNAL_DATA_STAGE/demo_data/campaigns.csv FILE_FORMAT = CSV_FORMAT ON_ERROR = 'CONTINUE';
 
 -- Verify
 SELECT 'users' as table_name, COUNT(*) FROM users
