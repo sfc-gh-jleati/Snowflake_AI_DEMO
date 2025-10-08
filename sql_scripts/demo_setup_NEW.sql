@@ -91,8 +91,8 @@ CREATE OR REPLACE STAGE INTERNAL_DATA_STAGE
 
 ALTER GIT REPOSITORY DAVE_AI_DEMO_REPO FETCH;
 
-COPY FILES INTO @INTERNAL_DATA_STAGE/demo_data/
-FROM @DAVE_AI_DEMO_REPO/branches/main/demo_data/;
+COPY FILES INTO @INTERNAL_DATA_STAGE/demo_data_new/
+FROM @DAVE_AI_DEMO_REPO/branches/main/demo_data_new/;
 
 COPY FILES INTO @INTERNAL_DATA_STAGE/unstructured_docs/
 FROM @DAVE_AI_DEMO_REPO/branches/main/unstructured_docs/;
@@ -145,35 +145,20 @@ CREATE OR REPLACE TABLE campaigns (
     impressions INT NOT NULL
 );
 
--- 5. EVENTS - App/Web clickstream events
-CREATE OR REPLACE TABLE events (
-    event_id INT PRIMARY KEY,
-    event_timestamp TIMESTAMP NOT NULL,
-    user_id INT NOT NULL,
-    event_name VARCHAR(100) NOT NULL,           -- app_open, screen_view, button_click, etc.
-    event_type VARCHAR(50) NOT NULL,            -- session_start, navigation, interaction, conversion
-    platform VARCHAR(20) NOT NULL,              -- iOS, Android, Web
-    device_type VARCHAR(20) NOT NULL,           -- mobile, desktop, tablet
-    screen_name VARCHAR(100),                   -- home, extracash_tab, banking_tab, etc.
-    session_id VARCHAR(50) NOT NULL
-) COMMENT = 'App and web clickstream events - user behavior, navigation, interactions';
-
 -- ========================================================================
 -- LOAD DATA FROM GIT
 -- ========================================================================
 
-COPY INTO users FROM @INTERNAL_DATA_STAGE/demo_data/users.csv FILE_FORMAT = CSV_FORMAT ON_ERROR = 'CONTINUE';
-COPY INTO products FROM @INTERNAL_DATA_STAGE/demo_data/products.csv FILE_FORMAT = CSV_FORMAT ON_ERROR = 'CONTINUE';
-COPY INTO transactions FROM @INTERNAL_DATA_STAGE/demo_data/transactions.csv FILE_FORMAT = CSV_FORMAT ON_ERROR = 'CONTINUE';
-COPY INTO campaigns FROM @INTERNAL_DATA_STAGE/demo_data/campaigns.csv FILE_FORMAT = CSV_FORMAT ON_ERROR = 'CONTINUE';
-COPY INTO events FROM @INTERNAL_DATA_STAGE/demo_data/events.csv FILE_FORMAT = CSV_FORMAT ON_ERROR = 'CONTINUE';
+COPY INTO users FROM @INTERNAL_DATA_STAGE/demo_data_new/users.csv FILE_FORMAT = CSV_FORMAT ON_ERROR = 'CONTINUE';
+COPY INTO products FROM @INTERNAL_DATA_STAGE/demo_data_new/products.csv FILE_FORMAT = CSV_FORMAT ON_ERROR = 'CONTINUE';
+COPY INTO transactions FROM @INTERNAL_DATA_STAGE/demo_data_new/transactions.csv FILE_FORMAT = CSV_FORMAT ON_ERROR = 'CONTINUE';
+COPY INTO campaigns FROM @INTERNAL_DATA_STAGE/demo_data_new/campaigns.csv FILE_FORMAT = CSV_FORMAT ON_ERROR = 'CONTINUE';
 
 -- Verify
 SELECT 'users' as table_name, COUNT(*) FROM users
 UNION ALL SELECT 'products', COUNT(*) FROM products
 UNION ALL SELECT 'transactions', COUNT(*) FROM transactions
-UNION ALL SELECT 'campaigns', COUNT(*) FROM campaigns
-UNION ALL SELECT 'events', COUNT(*) FROM events;
+UNION ALL SELECT 'campaigns', COUNT(*) FROM campaigns;
 
 -- ========================================================================
 -- SEMANTIC VIEW 1: PRODUCT ANALYTICS
@@ -181,9 +166,9 @@ UNION ALL SELECT 'events', COUNT(*) FROM events;
 
 CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.PRODUCT_ANALYTICS.product_analytics_view
     tables (
-        USERS as users primary key (USER_ID) with synonyms=('app users','members') comment='DAVE app users',
-        PRODUCTS as products primary key (PRODUCT_ID) with synonyms=('features','offerings','services') comment='DAVE products and features - ExtraCash, Banking, Budgeting, etc.',
-        TRANSACTIONS as transactions primary key (TRANSACTION_ID) with synonyms=('usage events','product usage') comment='Product usage transactions - when users engage with features'
+        USERS as users primary key (USER_ID) comment='DAVE app users',
+        PRODUCTS as products primary key (PRODUCT_ID) comment='DAVE products and features',
+        TRANSACTIONS as transactions primary key (TRANSACTION_ID) comment='Product usage transactions'
     )
     relationships (
         TXN_TO_USERS as TRANSACTIONS(USER_ID) references USERS(USER_ID),
@@ -191,21 +176,21 @@ CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.PRODUCT_ANALYTICS.product_analytics
     )
     facts (
         TRANSACTIONS.AMOUNT as amount comment='Transaction amount',
-        TRANSACTIONS.TXN_COUNT as 1 comment='Count of transactions'
+        TRANSACTIONS.TRANSACTION_RECORD as 1 comment='Count of transactions'
     )
     dimensions (
-        TRANSACTIONS.TRANSACTION_DATE as transaction_date with synonyms=('date','usage date') comment='Date of transaction',
-        TRANSACTIONS.TXN_MONTH as MONTH(transaction_date) comment='Month',
-        TRANSACTIONS.TXN_YEAR as YEAR(transaction_date) comment='Year',
+        TRANSACTIONS.TRANSACTION_DATE as transaction_date comment='Date of transaction',
+        TRANSACTIONS.MONTH as MONTH(transaction_date) comment='Month',
+        TRANSACTIONS.YEAR as YEAR(transaction_date) comment='Year',
         TRANSACTIONS.REGION as region comment='Geographic region',
-        PRODUCTS.PRODUCT_NAME as product_name with synonyms=('feature','feature name','product','offering') comment='Product/feature name (ExtraCash Advance $75, Dave Banking Account, etc.)',
-        PRODUCTS.PRODUCT_CATEGORY as product_category with synonyms=('category','feature type','product type') comment='Product category (Cash Advance, Banking, Budgeting, Tip, Subscription)',
+        PRODUCTS.PRODUCT_NAME as product_name comment='Product name',
+        PRODUCTS.PRODUCT_CATEGORY as product_category comment='Product category',
         PRODUCTS.PRICE_POINT as price_point comment='Typical price',
-        USERS.USER_SEGMENT as user_segment with synonyms=('segment','user type') comment='User segment (Gig Worker, Young Professional, Student)',
-        USERS.ACCOUNT_TIER as account_tier with synonyms=('tier','subscription level') comment='Account tier (Free, Basic, Premium, Premium Plus)'
+        USERS.USER_SEGMENT as user_segment comment='User segment (Gig Worker, Young Professional, Student)',
+        USERS.ACCOUNT_TIER as account_tier comment='Account tier (Free, Basic, Premium, Premium Plus)'
     )
     metrics (
-        TRANSACTIONS.TOTAL_TRANSACTIONS as COUNT(transactions.txn_count) comment='Total transactions',
+        TRANSACTIONS.TOTAL_TRANSACTIONS as COUNT(transactions.transaction_record) comment='Total transactions',
         TRANSACTIONS.TOTAL_REVENUE as SUM(transactions.amount) comment='Total revenue',
         TRANSACTIONS.AVERAGE_AMOUNT as AVG(transactions.amount) comment='Average transaction amount'
     )
@@ -224,7 +209,7 @@ CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.PRODUCT_ANALYTICS.user_acquisition_
         CAMPAIGNS.SPEND as spend comment='Campaign spend',
         CAMPAIGNS.LEADS_GENERATED as leads_generated comment='Leads generated',
         CAMPAIGNS.IMPRESSIONS as impressions comment='Ad impressions',
-        CAMPAIGNS.CAMP_COUNT as 1 comment='Count of campaigns'
+        CAMPAIGNS.CAMPAIGN_RECORD as 1 comment='Count of campaigns'
     )
     dimensions (
         USERS.USER_SEGMENT as user_segment comment='User segment',
@@ -233,7 +218,7 @@ CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.PRODUCT_ANALYTICS.user_acquisition_
         USERS.ACCOUNT_TIER as account_tier comment='Account tier',
         USERS.SIGNUP_DATE as signup_date comment='User signup date',
         USERS.REGION as region comment='User region',
-        CAMPAIGNS.CHANNEL as channel comment='Campaign channel',
+        CAMPAIGNS.CHANNEL as campaign_channel comment='Campaign channel',
         CAMPAIGNS.CAMPAIGN_NAME as campaign_name comment='Campaign name',
         CAMPAIGNS.CAMPAIGN_DATE as campaign_date comment='Campaign date'
     )
@@ -244,40 +229,6 @@ CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.PRODUCT_ANALYTICS.user_acquisition_
         CAMPAIGNS.CAC as SUM(campaigns.spend) / SUM(campaigns.leads_generated) comment='Customer acquisition cost'
     )
     comment='User acquisition analytics - LTV by segment, CAC by channel';
-
--- ========================================================================
--- SEMANTIC VIEW 3: APP & WEB EVENTS
--- ========================================================================
-
-CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.PRODUCT_ANALYTICS.event_analytics_view
-    tables (
-        USERS as users primary key (USER_ID) with synonyms=('app users') comment='DAVE app users',
-        EVENTS as events primary key (EVENT_ID) with synonyms=('clickstream','app events','web events') comment='App and web clickstream events'
-    )
-    relationships (
-        EVENTS_TO_USERS as EVENTS(USER_ID) references USERS(USER_ID)
-    )
-    facts (
-        EVENTS.EVENT_COUNT as 1 comment='Count of events'
-    )
-    dimensions (
-        EVENTS.EVENT_TIMESTAMP as event_timestamp with synonyms=('timestamp','event time') comment='Event timestamp',
-        EVENTS.EVENT_DATE as DATE(event_timestamp) comment='Event date',
-        EVENTS.EVENT_HOUR as HOUR(event_timestamp) comment='Hour of day',
-        EVENTS.EVENT_NAME as event_name with synonyms=('event','action') comment='Event name (app_open, screen_view, button_click, etc.)',
-        EVENTS.EVENT_TYPE as event_type comment='Event type (session_start, navigation, interaction, conversion)',
-        EVENTS.PLATFORM as platform with synonyms=('os','operating system') comment='Platform (iOS, Android, Web)',
-        EVENTS.DEVICE_TYPE as device_type with synonyms=('device') comment='Device type (mobile, desktop, tablet)',
-        EVENTS.SCREEN_NAME as screen_name with synonyms=('screen','page') comment='Screen or page name',
-        EVENTS.SESSION_ID as session_id comment='Session identifier',
-        USERS.USER_SEGMENT as user_segment comment='User segment'
-    )
-    metrics (
-        EVENTS.TOTAL_EVENTS as COUNT(events.event_count) comment='Total events',
-        EVENTS.UNIQUE_USERS as COUNT(DISTINCT events.user_id) comment='Unique users',
-        EVENTS.UNIQUE_SESSIONS as COUNT(DISTINCT events.session_id) comment='Unique sessions'
-    )
-    comment='App and web event analytics - user behavior, platform usage, engagement patterns';
 
 -- Show semantic views
 SHOW SEMANTIC VIEWS;
@@ -377,18 +328,16 @@ COMMENT='Product analytics agent for DAVE - answers questions about users, produ
 FROM SPECIFICATION $$
 {
   "instructions": {
-    "response": "You are a product analytics specialist for DAVE, a fintech company. Answer questions about product usage, user segments, revenue, acquisition channels, and app/web behavior using the available data.",
+    "response": "You are a product analytics specialist for DAVE, a fintech company. Answer questions about product usage, user segments, revenue, and acquisition channels using the available data.",
     "sample_questions": [
       {"question": "What are the top 5 most used DAVE features?"},
       {"question": "Which user segments have the highest lifetime value?"},
-      {"question": "What platforms do users access DAVE on?"},
-      {"question": "Show me app usage by device type"}
+      {"question": "What's the customer acquisition cost by channel?"}
     ]
   },
   "tools": [
     {"tool_spec": {"type": "cortex_analyst_text_to_sql", "name": "Query_Product_Analytics", "description": "Query product usage, transactions, revenue, and user behavior"}},
     {"tool_spec": {"type": "cortex_analyst_text_to_sql", "name": "Query_User_Acquisition", "description": "Query user segments, LTV, acquisition channels, and CAC"}},
-    {"tool_spec": {"type": "cortex_analyst_text_to_sql", "name": "Query_App_Events", "description": "Query app and web clickstream events - user behavior across iOS, Android, and Web platforms, device types, screen navigation, and engagement patterns"}},
     {"tool_spec": {"type": "cortex_search", "name": "Search_Documents", "description": "Search product documentation and policies"}},
     {"tool_spec": {"type": "generic", "name": "Web_Scraper", "description": "Scrape and analyze external websites", "input_schema": {"type": "object", "properties": {"url": {"type": "string", "description": "Website URL to scrape"}}, "required": ["url"]}}},
     {"tool_spec": {"type": "generic", "name": "Send_Email", "description": "Send email summaries", "input_schema": {"type": "object", "properties": {"recipient": {"type": "string"}, "subject": {"type": "string"}, "content": {"type": "string"}}, "required": ["recipient", "subject", "content"]}}}
@@ -396,7 +345,6 @@ FROM SPECIFICATION $$
   "tool_resources": {
     "Query_Product_Analytics": {"semantic_view": "DAVE_AI_DEMO.PRODUCT_ANALYTICS.product_analytics_view"},
     "Query_User_Acquisition": {"semantic_view": "DAVE_AI_DEMO.PRODUCT_ANALYTICS.user_acquisition_view"},
-    "Query_App_Events": {"semantic_view": "DAVE_AI_DEMO.PRODUCT_ANALYTICS.event_analytics_view"},
     "Search_Documents": {"name": "DAVE_AI_DEMO.PRODUCT_ANALYTICS.SEARCH_DOCS", "max_results": 5},
     "Web_Scraper": {"identifier": "DAVE_AI_DEMO.PRODUCT_ANALYTICS.WEB_SCRAPE", "type": "function", "execution_environment": {"type": "warehouse", "warehouse": "DAVE_INTELLIGENCE_DEMO_WH"}},
     "Send_Email": {"identifier": "DAVE_AI_DEMO.PRODUCT_ANALYTICS.SEND_EMAIL", "type": "procedure", "execution_environment": {"type": "warehouse", "warehouse": "DAVE_INTELLIGENCE_DEMO_WH"}}
@@ -413,7 +361,7 @@ SHOW SEMANTIC VIEWS;
 SHOW AGENTS IN SCHEMA SNOWFLAKE_INTELLIGENCE.AGENTS;
 
 SELECT 'Setup Complete!' as status, 
-       'Tables: 5' as tables_created,
-       'Semantic Views: 3' as views_created,
-       'Total Rows: ~1,500' as data_volume,
+       'Tables: 4' as tables_created,
+       'Semantic Views: 2' as views_created,
+       'Total Rows: ~1,300' as data_volume,
        'Agent: DAVE_Product_Analytics_Agent' as agent_created;
