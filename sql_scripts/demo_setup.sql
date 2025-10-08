@@ -166,9 +166,9 @@ UNION ALL SELECT 'campaigns', COUNT(*) FROM campaigns;
 
 CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.PRODUCT_ANALYTICS.product_analytics_view
     tables (
-        USERS as users primary key (USER_ID) comment='DAVE app users',
-        PRODUCTS as products primary key (PRODUCT_ID) comment='DAVE products and features',
-        TRANSACTIONS as transactions primary key (TRANSACTION_ID) comment='Product usage transactions'
+        USERS as users primary key (USER_ID) with synonyms=('app users','members') comment='DAVE app users',
+        PRODUCTS as products primary key (PRODUCT_ID) with synonyms=('features','offerings','services') comment='DAVE products and features - ExtraCash, Banking, Budgeting, etc.',
+        TRANSACTIONS as transactions primary key (TRANSACTION_ID) with synonyms=('usage events','product usage') comment='Product usage transactions - when users engage with features'
     )
     relationships (
         TXN_TO_USERS as TRANSACTIONS(USER_ID) references USERS(USER_ID),
@@ -179,15 +179,15 @@ CREATE OR REPLACE SEMANTIC VIEW DAVE_AI_DEMO.PRODUCT_ANALYTICS.product_analytics
         TRANSACTIONS.TXN_COUNT as 1 comment='Count of transactions'
     )
     dimensions (
-        TRANSACTIONS.TRANSACTION_DATE as transaction_date comment='Date of transaction',
+        TRANSACTIONS.TRANSACTION_DATE as transaction_date with synonyms=('date','usage date') comment='Date of transaction',
         TRANSACTIONS.TXN_MONTH as MONTH(transaction_date) comment='Month',
         TRANSACTIONS.TXN_YEAR as YEAR(transaction_date) comment='Year',
         TRANSACTIONS.REGION as region comment='Geographic region',
-        PRODUCTS.PRODUCT_NAME as product_name comment='Product name',
-        PRODUCTS.PRODUCT_CATEGORY as product_category comment='Product category',
+        PRODUCTS.PRODUCT_NAME as product_name with synonyms=('feature','feature name','product','offering') comment='Product/feature name (ExtraCash Advance $75, Dave Banking Account, etc.)',
+        PRODUCTS.PRODUCT_CATEGORY as product_category with synonyms=('category','feature type','product type') comment='Product category (Cash Advance, Banking, Budgeting, Tip, Subscription)',
         PRODUCTS.PRICE_POINT as price_point comment='Typical price',
-        USERS.USER_SEGMENT as user_segment comment='User segment (Gig Worker, Young Professional, Student)',
-        USERS.ACCOUNT_TIER as account_tier comment='Account tier (Free, Basic, Premium, Premium Plus)'
+        USERS.USER_SEGMENT as user_segment with synonyms=('segment','user type') comment='User segment (Gig Worker, Young Professional, Student)',
+        USERS.ACCOUNT_TIER as account_tier with synonyms=('tier','subscription level') comment='Account tier (Free, Basic, Premium, Premium Plus)'
     )
     metrics (
         TRANSACTIONS.TOTAL_TRANSACTIONS as COUNT(transactions.txn_count) comment='Total transactions',
