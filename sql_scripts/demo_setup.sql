@@ -356,11 +356,18 @@ RETURNS TEXT
 LANGUAGE PYTHON
 RUNTIME_VERSION = 3.11
 PACKAGES = ('snowflake-snowpark-python')
-HANDLER = 'send'
+HANDLER = 'send_email_handler'
 AS $$
-def send(session, recipient, subject, content):
-    session.call('SYSTEM$SEND_EMAIL', 'email_integration', recipient, subject, content, 'text/html')
-    return f'Email sent to {recipient}'
+def send_email_handler(session, recipient, subject, content):
+    session.call(
+        'SYSTEM$SEND_EMAIL',
+        'email_integration',
+        recipient,
+        subject,
+        content,
+        'text/html'
+    )
+    return f'Email sent to {recipient} with subject: {subject}'
 $$;
 
 -- ========================================================================
@@ -402,7 +409,7 @@ FROM SPECIFICATION $$
     "Query_App_Events": {"semantic_view": "DAVE_AI_DEMO.PRODUCT_ANALYTICS.event_analytics_view"},
     "Search_Documents": {"name": "DAVE_AI_DEMO.PRODUCT_ANALYTICS.SEARCH_DOCS", "max_results": 5},
     "Web_Scraper": {"identifier": "DAVE_AI_DEMO.PRODUCT_ANALYTICS.WEB_SCRAPE", "type": "function", "execution_environment": {"type": "warehouse", "warehouse": "DAVE_INTELLIGENCE_DEMO_WH"}},
-    "Send_Email": {"identifier": "DAVE_AI_DEMO.PRODUCT_ANALYTICS.SEND_EMAIL", "type": "procedure", "execution_environment": {"type": "warehouse", "warehouse": "DAVE_INTELLIGENCE_DEMO_WH"}}
+    "Send_Email": {"identifier": "DAVE_AI_DEMO.PRODUCT_ANALYTICS.SEND_EMAIL", "name": "SEND_EMAIL(VARCHAR, VARCHAR, VARCHAR)", "type": "procedure", "execution_environment": {"type": "warehouse", "warehouse": "DAVE_INTELLIGENCE_DEMO_WH"}}
   }
 }
 $$;
